@@ -4,21 +4,45 @@
 // worked, exercises a novice couldn't do from the text alone.
 //
 //   npm run review -- <course-id> [threshold]     (threshold default 0.75)
+//   npm run review -- <course-id> --only=u1l4,u4l4    (re-check specific lessons)
 //
 // Needs Anthropic credentials (ANTHROPIC_API_KEY or an `ant auth login`
 // profile). Costs API tokens — run once per new/deepened course, not on every
 // validate. Exits non-zero if any lesson scores below the threshold.
 
 import Anthropic from "@anthropic-ai/sdk";
+import fs from "node:fs";
 import { COURSES } from "../src/data/index.js";
 
-const [courseId, thresholdArg] = process.argv.slice(2);
+// Credential bridge. The app keeps its key in .env.local under Vite's
+// VITE_ANTHROPIC_API_KEY, but Node does not auto-load .env files and the SDK
+// looks for ANTHROPIC_API_KEY — so without this every run fails auth with the
+// key sitting right there. loadEnvFile does not clobber already-set vars, so
+// precedence is shell > .env.local > .env. Falls through untouched to a real
+// ANTHROPIC_API_KEY or an `ant auth login` profile when no .env file exists.
+for (const f of [".env.local", ".env"]) {
+  if (fs.existsSync(f)) {
+    try {
+      process.loadEnvFile(f);
+    } catch {
+      /* malformed env file: ignore and let the SDK report missing credentials */
+    }
+  }
+}
+process.env.ANTHROPIC_API_KEY ||= process.env.VITE_ANTHROPIC_API_KEY;
+
+const argv = process.argv.slice(2);
+// --only=id,id restricts the run to specific lessons. Re-reviewing after a fix
+// is the normal workflow, and a full course is 40+ paid calls.
+const onlyArg = argv.find((a) => a.startsWith("--only="));
+const ONLY = onlyArg ? new Set(onlyArg.slice("--only=".length).split(",").map((s) => s.trim()).filter(Boolean)) : null;
+const [courseId, thresholdArg] = argv.filter((a) => !a.startsWith("--"));
 const THRESHOLD = Number(thresholdArg) || 0.75;
 const CONCURRENCY = 4;
 
 const course = COURSES.find((c) => c.id === courseId);
 if (!course) {
-  console.error(`Usage: npm run review -- <course-id> [threshold]\nKnown: ${COURSES.map((c) => c.id).join(", ")}`);
+  console.error(`Usage: npm run review -- <course-id> [threshold] [--only=lessonId,…]\nKnown: ${COURSES.map((c) => c.id).join(", ")}`);
   process.exit(1);
 }
 
@@ -86,7 +110,16 @@ async function reviewLesson(unit, lesson) {
 }
 
 // Simple bounded-concurrency runner over all lessons.
-const jobs = course.units.flatMap((u) => u.lessons.map((l) => ({ unit: u, lesson: l })));
+const jobs = course.units
+  .flatMap((u) => u.lessons.map((l) => ({ unit: u, lesson: l })))
+  .filter(({ lesson }) => !ONLY || ONLY.has(lesson.id));
+if (ONLY) {
+  const missing = [...ONLY].filter((id) => !jobs.some((j) => j.lesson.id === id));
+  if (missing.length) {
+    console.error(`No such lesson(s) in ${course.id}: ${missing.join(", ")}`);
+    process.exit(1);
+  }
+}
 const results = [];
 let cursor = 0;
 
