@@ -11,8 +11,9 @@ import { aiImplementation } from "./courses/ai-implementation.js";
 import { technicalInterviews } from "./courses/technical-interviews.js";
 import { react } from "./courses/react.js";
 import { aiEvals } from "./courses/ai-evals.js";
+import { python } from "./courses/python.js";
 
-export const COURSES = [algorithms, entrepreneurship, cloud, langgraph, aiImplementation, aiEvals, technicalInterviews, react, probability];
+export const COURSES = [algorithms, entrepreneurship, cloud, langgraph, aiImplementation, aiEvals, technicalInterviews, react, python, probability];
 
 export function getCourse(id) {
   return COURSES.find((c) => c.id === id) || null;
