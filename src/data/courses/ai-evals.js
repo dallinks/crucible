@@ -47,6 +47,8 @@ export const aiEvals = {
   difficulty: "Professional",
   description:
     "Evaluating AI systems as a measurement science: an eval is an estimator of a latent quantity, and every score carries a standard error, a clustering structure, and a validity argument. Covers uncertainty quantification for evals, eval-set design, scoring functions, LLM-as-judge validation, human annotation, RAG and agent evaluation, and production/safety evals. Gates demand derivation — compute the interval, justify the design, defend the construct — under a strict measurement-scientist rubric.",
+  overview:
+    "Every consequential decision in AI engineering — ship this model or that one, keep the prompt change, trust the agent in production, call the system safe enough — rests on an **evaluation**: a procedure that turns model behavior into a number so the decision can be made. Evals are how teams catch regressions, compare candidates, track progress, and back up safety claims. They are the instrument panel of the field — and in most organizations, nobody has checked whether the instruments are calibrated.\n\nThis course teaches evaluation as a **measurement science**, built on one organizing idea: *an eval is an estimator*. It takes a finite, noisy, non-random sample of behavior and produces a number that stands in for a latent quantity you actually care about — capability, harm rate, user-perceived quality. Taking that seriously gives the course its two pillars. The **statistical** pillar: an eval score is a random variable, with a standard error, a clustering structure (k samples per question are not k independent observations), a power curve, and a multiple-comparisons problem — most reported eval 'improvements' are inside the noise. The **validity** pillar: an eval score is a proxy, governed by construct validity, contamination, saturation, and Goodhart's law — a perfectly precise number can still be wrong about the thing it is named after.\n\nThe arc: units 1–3 build the measurement core — what an eval estimates, how to put a defensible error bar on a score, and how to compare systems and make ship decisions honestly. Units 4–7 build the instrument itself — designing the eval set, scoring functions, LLM-as-judge, and the human labels everything else calibrates against. Units 8–10 apply the machinery where measurement is hardest: RAG pipelines, multi-step agents, and safety and production evals.\n\nBy the end you should be able to design an eval suite from scratch, attach honest uncertainty to any score, validate an automated judge before trusting it, and tell — with numbers — whether a change is real or noise. The gates demand exactly that: derive the interval, justify the design, defend the construct.",
   sources: [
     "Evan Miller — 'Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations' (Anthropic, arXiv:2411.00640, 2024)",
     "Liang et al. — 'Holistic Evaluation of Language Models' (HELM; Stanford CRFM, arXiv:2211.09110, 2022)",
@@ -77,6 +79,7 @@ export const aiEvals = {
       "id": "u1",
       "title": "The Measurement Problem",
       "summary": "An eval is an estimator of a latent quantity: what it estimates, how far off it can be, whether the number means what its name says, and why optimizing it destroys it.",
+      "intro": "The course begins with its central reframing. Before any statistics, this unit establishes what an eval is: an estimator — a procedure that samples behavior, scores it, and reports a number standing in for a latent quantity you cannot observe directly. You will define the estimand and the construct, prove the bias–variance decomposition that separates sampling error from validity error, and confront the ways the number can lie while looking precise: validity and reliability failures, Goodhart's law when a metric becomes a target, and the optimizer's curse guaranteeing that the winner you selected is overrated. The closing lesson turns diagnosis into practice — the eval lifecycle, and what to build first. Every later unit assumes this vocabulary; the gate makes you use it on real scenarios.",
       "references": [
         "Messick — 'Validity of Psychological Assessment' (American Psychologist 50(9), 1995)",
         "Lord & Novick — Statistical Theories of Mental Test Scores (1968) — classical test theory",
@@ -781,6 +784,7 @@ export const aiEvals = {
       "id": "u2",
       "title": "Error Bars",
       "summary": "Putting a defensible interval on an eval score: binomial intervals that behave near the ceiling, the clustering penalty for k samples per item, paired designs that cut the noise by 3x, and the sample size a decision actually requires.",
+      "intro": "Unit 1 said every eval score is an estimate; this unit puts the error bar on it. You will derive intervals for a pass rate that behave properly near the ceiling (Wilson, not the naive Wald formula), then prove the clustering correction: k samples per item are not n·k independent trials, and the effective sample size shrinks with intra-item correlation. Paired designs come next — comparing two systems on the same items — with the proof of why pairing routinely cuts the standard error by a factor of about three, for free. Power analysis closes the unit: the minimum detectable effect, and how many items a decision actually requires — the calculation revealing that most eval suites are too small to detect the differences teams claim to see.",
       "references": [
         "Evan Miller — 'Adding Error Bars to Evals' (Anthropic, arXiv:2411.00640, 2024) — clustered standard errors, paired designs, power for LLM evals",
         "Brown, Cai & DasGupta — 'Interval Estimation for a Binomial Proportion' (Statistical Science 16(2), 2001) — coverage of Wald vs Wilson vs Clopper–Pearson",
@@ -796,6 +800,7 @@ export const aiEvals = {
         {
           "id": "u2l1",
           "title": "Intervals for a Pass Rate",
+          "builds_on": ["u1l1"],
           "estMinutes": 24,
           "content": [
             {
@@ -1381,6 +1386,7 @@ export const aiEvals = {
       "id": "u3",
       "title": "Comparison & Decision",
       "summary": "Turning eval numbers into verdicts: tests that fit eval data, controlling error rates across many slices and candidates, what a leaderboard rank actually means, and the loss function that decides whether to ship.",
+      "intro": "You can now put an interval on one score; this unit is about deciding between systems. It builds the comparison machinery that fits eval data — paired tests on shared items, bootstrap resampling where formulas fail — then confronts the multiplicity problem: slice your results twenty ways, or compare five candidates, and something will look significant by chance, so Bonferroni and Benjamini–Hochberg control what 'significant' still means. Leaderboards and arenas get the same treatment: what an Elo-style rank does and does not estimate, and why adjacent ranks are usually statistical ties. The final lesson turns estimates into verdicts: the ship/no-ship decision as expected loss under uncertainty, not a threshold crossed by a point estimate. The gate poses exactly those decisions.",
       "references": [
         "Dror, Baumer, Shlomov & Reichart — 'The Hitchhiker's Guide to Testing Statistical Significance in NLP' (ACL 2018)",
         "Benjamini & Hochberg — 'Controlling the False Discovery Rate' (JRSS-B 57(1), 1995); Holm (1979) — sequentially rejective Bonferroni",
@@ -2108,6 +2114,7 @@ export const aiEvals = {
       "id": "u4",
       "title": "Designing the Eval Set",
       "summary": "Where the items come from: sampling a population you can name, stratifying for coverage and precision, measuring which items discriminate, detecting contamination, and building a set from production traffic that survives a year of use.",
+      "intro": "The statistics so far took the eval set as given; this unit builds it. Sampling comes first — naming the population your items claim to represent and drawing from it defensibly, because an eval of nothing in particular estimates nothing in particular. Stratification buys coverage and precision at once; item analysis — difficulty, discrimination, headroom — tells you which items carry measurement signal and which are dead weight. Contamination gets its own lesson: detecting when your items leaked into training data, and the hygiene that keeps a set trustworthy. The closing lesson assembles the practice: building an eval set from production traffic that survives a year of drift and reuse. Unit 1's validity vocabulary does the arguing throughout; the gate demands a defensible design, not a big n.",
       "references": [
         "Cochran — Sampling Techniques, 3e (1977), ch. 5 — stratified sampling, proportional and Neyman allocation",
         "Lord & Novick — Statistical Theories of Mental Test Scores (1968); Baker — The Basics of Item Response Theory (2001)",
@@ -2725,6 +2732,7 @@ export const aiEvals = {
       "id": "u5",
       "title": "Scoring Functions",
       "summary": "The function g that turns an output into a number: programmatic graders and the extraction problem, reference-based metrics and where they break, classification metrics and cost-optimal operating points, and calibration plus the pass@k family.",
+      "intro": "An eval's items ask the questions; the scoring function g decides what counts as a right answer — and this unit is its catalog. Programmatic graders come first, with the extraction problem that quietly corrupts them: the model answered correctly and the regex disagreed. Reference-based metrics — exact match, BLEU and ROUGE, embedding similarity — follow, with precise accounts of where each one breaks. Classification metrics then force the operating-point discipline: precision/recall trade-offs, AUC proved to equal P(score⁺ > score⁻), and thresholds chosen from costs rather than defaults. Calibration and the pass@k family close it, including the unbiased estimator and why the naive one deceives. The through-line: g is part of the measurement instrument, and validating it is not optional.",
       "references": [
         "Chen et al. — 'Evaluating Large Language Models Trained on Code' (arXiv:2107.03374, 2021) — the unbiased pass@k estimator",
         "Papineni, Roukos, Ward & Zhu — 'BLEU: a Method for Automatic Evaluation of Machine Translation' (ACL 2002); Lin — 'ROUGE' (2004)",
@@ -3285,6 +3293,7 @@ export const aiEvals = {
       "id": "u6",
       "title": "LLM-as-Judge",
       "summary": "Using a model to score outputs: the judge as a measurable noisy classifier, the bias taxonomy and how to cancel each bias, rubric and pairwise design, and the validation loop that keeps a judge anchored to human ground truth.",
+      "intro": "When outputs are free-form and human judgment is expensive, the tempting move is scoring with another model. This unit makes that move rigorous by treating the judge as what it is: a noisy classifier whose error rates you must measure before trusting anything it produces. You will derive how judge precision collapses under low base rates, work through the bias taxonomy — position, length, self-preference, sycophancy — with the design that cancels each one (randomization, pairwise designs, rubric decomposition), and build the validation loop: a human-labeled calibration set, agreement measured against it, and drift monitoring that keeps the judge anchored over time. Unit 5's classification machinery does the measuring. The gate's standing question: how do you know your judge is right — and how would you notice when it stops being?",
       "references": [
         "Zheng et al. — 'Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena' (NeurIPS 2023, arXiv:2306.05685) — position, verbosity and self-enhancement bias",
         "Shankar, Zamfirescu-Pereira, Hartmann, Parameswaran & Arawjo — 'Who Validates the Validators?' (UIST 2024) — criteria drift and the alignment loop",
@@ -3926,6 +3935,7 @@ export const aiEvals = {
       "id": "u7",
       "title": "Human Labels & Error Analysis",
       "summary": "The anchor everything else calibrates against: how ground truth is manufactured, how to measure and interpret agreement, what label noise costs and how many labelers to buy, and how to turn raw traces into a failure taxonomy.",
+      "intro": "Everything so far calibrates against 'ground truth,' and this unit tells the uncomfortable truth about it: ground truth is manufactured. Labels come from people following instructions, and the first lesson studies that production process — guidelines, ambiguity, and why label quality is a design problem rather than a given. Agreement statistics follow: chance-corrected kappa and alpha, their traps, and what 'good agreement' does and does not license. Then the economics: the attenuation result showing what label noise does to every downstream metric, and the purchasing decision it implies — how many labelers per item, majority vote versus adjudication versus Dawid–Skene. Error analysis closes the unit: turning raw failure traces into a taxonomy that tells you what to fix next — the single highest-leverage manual practice in evaluation.",
       "references": [
         "Cohen (1960) — 'A Coefficient of Agreement for Nominal Scales'; Fleiss (1971) — multi-rater kappa",
         "Krippendorff — Content Analysis: An Introduction to Its Methodology, 4e — alpha and the reliability standards",
@@ -4482,6 +4492,7 @@ export const aiEvals = {
       "id": "u8",
       "title": "Evaluating RAG",
       "summary": "Retrieval-augmented systems as a chain of stages: attributing end-to-end failure to the stage that caused it, measuring retrieval properly, checking groundedness at claim level, and running the ablations that diagnose a pipeline.",
+      "intro": "The course now applies its machinery to the first composite system: retrieval-augmented generation. A RAG pipeline fails in stages — retrieval misses, context gets ignored, generation hallucinates — so end-to-end scores are nearly uninformative, and the first lesson decomposes the pipeline into stagewise metrics that attribute failure to its cause. Retrieval gets proper treatment: recall@k, MRR, nDCG, and the choice of k as a budget decision rather than a default. Groundedness gets claim-level checking — is each generated statement supported by the retrieved context? — with LLM judges validated by Unit 6's discipline before being believed. The closing lesson runs the ablations that diagnose a real pipeline and decide where the next engineering week goes. The gate hands you failing RAG systems and asks: which stage, shown how?",
       "references": [
         "Es, James, Espinosa-Anke & Schockaert — 'RAGAS: Automated Evaluation of Retrieval Augmented Generation' (arXiv:2309.15217, 2023)",
         "Järvelin & Kekäläinen — 'Cumulated Gain-Based Evaluation of IR Techniques' (TOIS 2002) — nDCG",
@@ -5181,6 +5192,7 @@ export const aiEvals = {
       "id": "u9",
       "title": "Evaluating Agents",
       "summary": "Multi-step systems break the single-turn assumptions: reliability compounds exponentially, trajectories need partial credit, environments become part of the measurement, and cost develops a long tail that decides deployability.",
+      "intro": "Agents break the assumptions single-turn evaluation quietly relies on. Reliability compounds — an agent that is 95% reliable per step survives a twenty-step task about a third of the time — so per-step and per-task metrics diverge sharply, and pass^k rather than pass@k measures dependability. Trajectories need partial credit: an agent that nearly finished is different from one that looped forever, and scoring must see the path, not just the endpoint. The environment becomes part of the instrument — flaky sandboxes and non-reproducible tasks are measurement error wearing a costume — and cost develops a long tail that decides deployability as surely as accuracy does. This unit rebuilds the course's machinery for all four problems, with τ-bench and SWE-bench as the worked terrain.",
       "references": [
         "Jimenez, Yang, Wettig, Yao, Pei, Press & Narasimhan — 'SWE-bench: Can Language Models Resolve Real-World GitHub Issues?' (ICLR 2024)",
         "Yao, Shinn, Razavi & Narasimhan — 'τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains' (arXiv:2406.12045, 2024) — the pass^k reliability metric",
@@ -5743,6 +5755,7 @@ export const aiEvals = {
       "id": "u10",
       "title": "Safety, Red-Teaming & Production Evals",
       "summary": "Measuring what is rare and adversarial, trading refusal against helpfulness on an explicit frontier, evaluating on live traffic, and assembling the whole apparatus into a program that keeps working.",
+      "intro": "The final unit measures what least wants to be measured, then assembles the whole course into a practice. Safety evaluation is rare-event statistics: attack success rates from red-teaming, the wide intervals rare events force on you, and why 'zero failures observed' is not 'zero failures.' The refusal frontier makes the safety–helpfulness trade-off explicit — over-refusal is also a failure, and operating points are chosen on the frontier, not asserted. Online evaluation brings the discipline to live traffic: guardrails, drift detection, and the monitoring that catches what offline sets cannot. The closing lesson is the synthesis: the evaluation program — which evals exist, what each is for, who owns them, and how they keep working after the people who built them move on. The gate is the course in miniature.",
       "references": [
         "Ganguli et al. — 'Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned' (Anthropic, arXiv:2209.07858, 2022)",
         "Perez et al. — 'Red Teaming Language Models with Language Models' (EMNLP 2022) — automated adversarial generation",

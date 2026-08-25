@@ -12,6 +12,8 @@ export const algorithms = {
   difficulty: "Graduate",
   description:
     "A rigorous, proof-heavy treatment anchored in CLRS and MIT 6.046 — asymptotic analysis, correctness, sorting, hashing, and balanced search trees. The gates grade your proofs, not just your arithmetic.",
+  overview:
+    "An algorithm is a procedure with a claim attached: that it is *correct* on every valid input, and that its cost grows acceptably with input size. This course is about making both claims precise and **proving** them — the discipline that separates knowing that quicksort is usually fast from knowing why, exactly when it is not, and what to reach for instead. That discipline is the foundation under every performance-sensitive system, the shared vocabulary of computer-science research, and the substance behind technical interviews.\n\nThree pillars run through the course. **Analysis**: asymptotic notation as precisely defined sets of functions, recurrences and the Master Theorem, and amortized costs — machine-independent accounting for work. **Correctness**: loop invariants, induction, and exchange arguments — the proof techniques that turn 'it passed my tests' into 'it cannot fail'. **Design paradigms**: divide and conquer, greedy choice, dynamic programming, randomization — the small set of strategies from which the canonical algorithms fall out.\n\nThe arc: units 1–2 build the analytical toolkit — growth, recurrences, and correctness proofs. Units 3–5 apply it to the classical core: sorting and selection (including the Ω(n log n) comparison lower bound), hashing, and balanced search trees. Units 6–7 move to graphs — representation, traversal, and shortest paths. Units 8–10 are the design-paradigm block: greedy algorithms and their exchange arguments, dynamic programming, and amortized analysis. Units 11–13 finish at the frontier of tractability: maximum flow and min-cut, NP-completeness and reductions, and approximation and randomized algorithms for coping with intractability.\n\nThe treatment is graduate-level and proof-heavy, anchored in CLRS and MIT 6.006/6.046: derivations appear in full in the lessons, and the mastery gates grade your proofs against a rubric rather than your ability to recognize an answer. By the end you should be able to state and prove a bound, prove an algorithm correct with an invariant argument, solve the recurrence an algorithm generates, and choose data structures from their proven guarantees rather than from habit.",
   sources: [
     "Cormen, Leiserson, Rivest & Stein — Introduction to Algorithms (CLRS), 4th ed.",
     "MIT 6.006 / 6.046 (OpenCourseWare)",
@@ -23,6 +25,7 @@ export const algorithms = {
       id: "a1",
       title: "Asymptotic Analysis & Correctness",
       summary: "Define growth rigorously, count the work exactly, and prove an algorithm correct.",
+      intro: "Everything in this course rests on two abilities: saying precisely how fast an algorithm is, and proving that it is right. This opening unit builds both from the ground up. You will define the five asymptotic symbols as sets of functions and prove membership rather than assert it, place functions in the growth hierarchy with the limit method, count the exact work of loops with sums and series, and prove algorithms correct with loop invariants — the induction technique that turns a plausible procedure into a theorem. Nothing here is warm-up material: every later unit states its results in this vocabulary and proves them with these tools, so the mastery gate demands fluency — derive the bound, prove the invariant — before anything unlocks.",
       masteryThreshold: 0.85,
       lessons: [
         {
@@ -484,6 +487,7 @@ export const algorithms = {
       id: "a2",
       title: "Divide & Conquer and Recurrences",
       summary: "Split, recurse, combine — and solve the recurrences that result, including the Master Theorem and where it fails.",
+      intro: "Unit 1 gave you the vocabulary of growth and the machinery of proof; this unit applies both to the first great design paradigm: divide and conquer. Splitting a problem, recursing on the parts, and combining the answers produces algorithms whose cost is naturally expressed as a recurrence — T(n) = aT(n/b) + f(n) — so the unit is really about two skills at once: designing recursive algorithms, and solving the recurrences they generate. You will work the recursion-tree and substitution methods until they are mechanical, then prove and apply the Master Theorem, including the awkward cases between its regimes where it gives no answer. Sorting, selection, and half of the course's later analyses depend on reading a recurrence at sight, and the gate checks exactly that.",
       prerequisites: ["a1"],
       masteryThreshold: 0.85,
       lessons: [
@@ -941,6 +945,7 @@ export const algorithms = {
       id: "a3",
       title: "Sorting & Selection",
       summary: "Quicksort, heaps, the Ω(n log n) comparison lower bound, and selection in worst-case linear time.",
+      intro: "With recurrences in hand, the classical sorting results come quickly — and this unit contains one of the most striking theorems in the course. You will analyze quicksort, whose worst case is quadratic but whose expected time is Θ(n log n) for a reason worth proving carefully; build the heap, a complete binary tree living in an array, and get both heapsort and the priority queue from it; and then prove the Ω(n log n) comparison lower bound — the decision-tree argument showing that no comparison sort whatsoever can do better. The unit closes with selection: finding the k-th smallest element in worst-case linear time, an algorithm whose analysis is a small masterpiece of divide and conquer. The gate asks for the analyses, not the pseudocode.",
       prerequisites: ["a2"],
       masteryThreshold: 0.85,
       lessons: [
@@ -1488,6 +1493,7 @@ export const algorithms = {
       id: "a4",
       title: "Hashing & Hash Tables",
       summary: "Chaining, open addressing, and the expectations that make hashing O(1) — plus universal and perfect hashing.",
+      intro: "Sorting bought you O(n log n); hashing offers O(1) — in expectation, and only if you understand exactly what that expectation is taken over. This unit builds hash tables twice, by chaining and by open addressing, and derives the expected costs from the simple uniform hashing assumption, making precise how the load factor governs everything. Then it confronts the assumption itself: an adversary who knows your hash function can force worst-case behavior, and universal hashing — choosing the function at random from a carefully constructed family — restores the guarantee against any input. Perfect hashing pushes further to worst-case O(1) lookups for static sets, and dynamic resizing keeps tables fast as they grow, on credit the amortized analysis of Unit 10 will formally cash. Expectation arguments run through the whole unit.",
       prerequisites: ["a3"],
       masteryThreshold: 0.85,
       lessons: [
@@ -2042,6 +2048,7 @@ export const algorithms = {
       id: "a5",
       title: "Binary Search Trees & Balance",
       summary: "Why BST operations are O(height), how AVL and red-black trees force height O(log n), and how to prove it.",
+      intro: "Hash tables answer membership in O(1) but keep no order: they cannot give you the minimum, a range, or a predecessor. Binary search trees restore order — every operation runs in O(height) — which converts the entire question into one problem: keeping the height logarithmic. This unit states that problem honestly (a plain BST degrades to a linked list under sorted insertion), then studies the two classical repairs. AVL trees enforce a strict height invariant with rotations, and you will prove the Fibonacci-flavored bound that makes them O(log n); red-black trees relax the invariant for cheaper maintenance, and the black-height argument proves their height bound too. Augmentation closes the unit: storing subtree sizes to answer order-statistic queries, the technique behind many interview one-liners.",
       prerequisites: ["a4"],
       masteryThreshold: 0.85,
       lessons: [
@@ -2628,6 +2635,7 @@ export const algorithms = {
       id: "a6",
       title: "Graph Representation & Traversal",
       summary: "Represent graphs, and explore them with BFS and DFS — distances, topological order, and cycle detection.",
+      intro: "The course turns from data structures to graphs — the modeling language for networks, dependencies, and state spaces, and the setting for the rest of the algorithmic core. This unit builds the foundations: adjacency lists versus matrices and the arithmetic of degrees (the handshake lemma is your first graph proof), then the two canonical traversals. Breadth-first search computes shortest distances in unweighted graphs, and you will prove that claim, not just observe it; depth-first search produces discovery and finish times whose nesting structure yields topological sort and cycle detection almost for free. Both run in Θ(V + E), and both are the subroutine inside nearly every later graph algorithm, so the gate demands you can run them, prove them, and read their by-products.",
       prerequisites: ["a5"],
       masteryThreshold: 0.85,
       lessons: [
@@ -3337,6 +3345,7 @@ export const algorithms = {
       id: "a7",
       title: "Shortest Paths",
       summary: "Relaxation, Dijkstra for non-negative weights, Bellman-Ford for negative edges, and DAG shortest paths.",
+      intro: "BFS solved shortest paths when every edge costs one; real graphs have weights, and this unit develops the theory that handles them. Everything is built on a single primitive — relaxation, the act of improving a distance estimate through an edge — and on the optimal-substructure lemma that subpaths of shortest paths are themselves shortest paths. Dijkstra's algorithm greedily settles the closest unsettled vertex, and its correctness proof (an invariant argument in the Unit 1 style) is the heart of the unit; it fails with negative edges, which Bellman–Ford tolerates at higher cost while also detecting negative cycles. DAGs admit a linear-time solution via Unit 6's topological order. Three algorithms, one primitive — the gate asks you to choose correctly and prove why.",
       prerequisites: ["a6"],
       masteryThreshold: 0.85,
       lessons: [
@@ -3954,6 +3963,7 @@ export const algorithms = {
       id: "a8",
       title: "Greedy Algorithms",
       summary: "When local choices are globally optimal — exchange arguments, the MST cut property, scheduling, and Huffman codes.",
+      intro: "Dijkstra was your first greedy algorithm — it commits to each choice and never reconsiders — and it worked. This unit asks when that strategy is legitimate in general, because greed usually fails, and the interesting content is the proof obligation: an exchange argument showing that any optimal solution can be rewritten, swap by swap, into the greedy one without getting worse. You will prove the cut property that underwrites both Kruskal's and Prim's minimum-spanning-tree algorithms, meet the union-find structure that makes Kruskal fast (analyzed fully in Unit 10), apply exchange arguments to scheduling, and build Huffman codes — greedy compression that is provably optimal. The gate grades the arguments: a greedy answer without an exchange proof is a guess.",
       prerequisites: ["a7"],
       masteryThreshold: 0.85,
       lessons: [
@@ -4609,6 +4619,7 @@ export const algorithms = {
       id: "a9",
       title: "Dynamic Programming",
       summary: "Optimal substructure with overlapping subproblems — memoization, tabulation, and the classic recurrences.",
+      intro: "When greedy fails — when no single choice is safely irrevocable — the next resort is dynamic programming: solve every subproblem once, store the answers, and let optimal substructure assemble them into the whole. The discipline is in the setup, not the code: define the subproblem precisely, write the recurrence with its base cases, and only then choose memoization or tabulation. This unit drills that discipline on the canon — longest common subsequence and edit distance for sequences, knapsack for budgeted choice, matrix-chain for order of operations — and insists on reconstructing the actual solution, not merely its value. DP is the most examined topic in the course for a reason: it is a transferable method, and the gate poses recurrences you have not seen.",
       prerequisites: ["a8"],
       masteryThreshold: 0.85,
       lessons: [
@@ -5089,6 +5100,7 @@ export const algorithms = {
       id: "a10",
       title: "Amortized Analysis",
       summary: "Average cost per operation over a worst-case sequence — aggregate, accounting, and the potential method, up to union-find's α(n).",
+      intro: "Unit 4's resizing hash tables and Unit 8's union-find both made a promise this unit finally redeems: that a data structure can be fast on average over any worst-case sequence, even when individual operations are occasionally expensive. That is amortized analysis, and you will learn its three methods — aggregate counting, the accounting method's prepaid credits, and the potential method, which turns the argument into an exercise in choosing a function Φ. The payoff is one of the deepest results in the course: disjoint-set forests with union by rank and path compression run in O(α(n)) amortized per operation, where α is the inverse Ackermann function — a bound so close to constant that no practical input distinguishes them. The gate asks you to run the methods, not recite them.",
       prerequisites: ["a9"],
       masteryThreshold: 0.85,
       lessons: [
@@ -5744,6 +5756,7 @@ export const algorithms = {
       id: "a11",
       title: "Maximum Flow",
       summary: "Flow networks, the max-flow min-cut theorem, Ford-Fulkerson / Edmonds-Karp, and bipartite matching by reduction.",
+      intro: "This unit takes on a problem with an entirely different flavor: pushing as much flow as possible through a capacitated network. Its centerpiece is a genuine duality theorem — max-flow equals min-cut — proved through the residual graph and augmenting paths, and the proof doubles as an algorithm: Ford–Fulkerson, sharpened into the polynomial Edmonds–Karp by always choosing shortest augmenting paths. The second theme is reduction as a design tool: maximum bipartite matching, which looks nothing like flow, is solved exactly by building a unit-capacity network and running the machinery you just proved correct. That habit — recognizing your problem inside one you already solved — is the bridge to Unit 12, where reductions become the main object of study.",
       prerequisites: ["a10"],
       masteryThreshold: 0.85,
       lessons: [
@@ -6599,6 +6612,7 @@ export const algorithms = {
       id: "a12",
       title: "NP-Completeness",
       summary: "P, NP, polynomial reductions, and what it means — and takes — to prove a problem NP-complete.",
+      intro: "Every algorithm so far ran in polynomial time. This unit confronts the problems for which nobody has found such an algorithm — and the theory that explains why that is probably not your fault. You will define P and NP precisely (NP is about verifying certificates, not 'not polynomial'), make polynomial reduction the ordering that transfers hardness between problems, and see the Cook–Levin theorem place SAT at the bottom of it all. Then you do the real work: a complete NP-completeness proof for VERTEX-COVER, the two-directional argument every such proof requires. The unit ends by mapping the landscape and the honest options intractability leaves you. The skill being taught — and gated — is constructing reductions, the most transferable proof technique in the course.",
       prerequisites: ["a11"],
       masteryThreshold: 0.85,
       lessons: [
@@ -7435,6 +7449,7 @@ export const algorithms = {
       id: "a13",
       title: "Approximation & Randomized Algorithms",
       summary: "Coping with intractability: provably-near-optimal approximations, and randomization analyzed with indicator variables.",
+      intro: "NP-completeness told you what you cannot have; this closing unit is about what you can salvage — and it reuses everything the course has built. Approximation algorithms give provable guarantees near the optimum: vertex cover within a factor of 2, set cover's logarithmic bound, metric TSP via MST doubling, and the schemes that trade running time for precision. Randomized algorithms give expected guarantees instead: the Las Vegas versus Monte Carlo distinction, and analyses built from indicator variables and linearity of expectation — the technique that makes randomized quicksort's Θ(n log n) expected time an easy calculation rather than a hard one. The gate closes the course the way it began: no bound asserted without a proof.",
       prerequisites: ["a12"],
       masteryThreshold: 0.85,
       lessons: [

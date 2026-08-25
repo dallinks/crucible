@@ -9,6 +9,7 @@ export const aiImplementation = {
   "subject": "Applied Artificial Intelligence",
   "difficulty": "Professional / Applied",
   "description": "Build, deploy, and operate real AI systems — from how LLMs actually work through prompting, RAG, agents, the enterprise implementation patterns, and production operations. Practical and source-grounded, with code in C#/Semantic Kernel and Python/LangChain. The gates demand applied judgment, not recall.",
+  "overview": "Every organization is now under pressure to 'add AI', and most attempts fail the same ways: pilots that never reach production, chatbots bolted onto workflows that did not need them, costs and risks discovered after launch. This course is a practitioner's reference for doing it properly — building, deploying, and operating real AI systems — aimed at working engineers and at the architects and leaders who direct them.\n\nIt rests on three pillars. **Mechanism over magic**: knowing what a model actually is — patterns learned by gradient descent, tokens predicted with attention — so that capabilities and failure modes stop being surprising. **Architecture**: the small set of patterns that cover most production AI — direct prompting, retrieval-augmented generation for grounding a model in your data, and agents for multi-step work — and how to choose among them on cost, latency, and risk. **Operations**: an AI feature is not done when the demo works; it is done when it is deployed, monitored, secured, and paying for itself.\n\nThe arc: units 1–2 build the foundations — the AI landscape, and how LLMs actually work (tokenization, attention, training, inference). Units 3–5 are the core implementation patterns: prompt engineering, RAG systems, and agents, with working code in C#/Semantic Kernel and Python/LangChain. Units 6–7 take those patterns to the enterprise: implementation strategy, architecture, and ROI, then production operations and LLMOps. Units 8–9 widen the lens: vision and multimodal applications, and AI strategy for what comes next.\n\nBy the end you should be able to pick the right pattern for a use case and defend the choice, implement it with current tooling, estimate its cost and latency envelope, and stand behind it in production. The gates demand applied judgment — trade-offs, failure modes, and numbers — not recall of vendor names.",
   "grader": "You are a pragmatic principal AI engineer grading applied implementation decisions. Reward correct, specific, trade-off-aware reasoning; penalize buzzwords, hand-waving, and choices that ignore cost, latency, data, or failure modes.",
   "sources": [
     "Adapted from the in-house 'AI Implementation Reference' course (9 modules, 39 lessons)."
@@ -18,6 +19,7 @@ export const aiImplementation = {
       "id": "m1",
       "title": "AI Foundations",
       "summary": "The landscape of artificial intelligence — taxonomy, capabilities, and why it matters now.",
+      "intro": "The course opens by replacing buzzwords with a mechanism. You will see what every AI system actually is — a function with billions of learned parameters, tuned by gradient descent over examples — and use that mechanism to organize the taxonomy: machine learning versus deep learning versus generative AI as nested refinements, not competing brands. The landscape lesson then maps the current ecosystem — the frontier labs, the open-weight models, and the capability and cost tiers — so you can read an announcement and place it accurately. The point of the unit is calibration: knowing what these systems fundamentally do is what makes every later judgment in the course — pattern selection, cost estimation, risk assessment — grounded rather than vibes-based.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -567,6 +569,7 @@ export const aiImplementation = {
       "id": "m2",
       "title": "How LLMs Work",
       "summary": "Tokenization, attention, training, and inference — the mechanics behind the magic.",
+      "intro": "With the mechanism in view, this unit goes inside the LLM specifically — deep enough to predict its behavior and price it. Tokenization explains the units everything is billed and limited in; embeddings and attention explain how context actually influences output, which is the lever every later technique pulls; the training pipeline — pretraining, fine-tuning, RLHF — explains what a model can and cannot have learned. The second half turns economic and practical: token pricing and cost optimization, a model-selection guide keyed to task, latency, and budget, and the customization ladder from prompting through RAG to fine-tuning, with honest guidance on when each rung is worth its cost. This unit is the reference the implementation patterns of Units 3–5 constantly reach back to.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -1687,6 +1690,7 @@ export const aiImplementation = {
       "id": "m3",
       "title": "Prompt Engineering",
       "summary": "Communicating with models to get reliable, production-quality results.",
+      "intro": "Prompting is the interface to everything Unit 2 described, and this unit treats it as engineering rather than folklore. Fundamentals first: role, context, instruction, and output format as the anatomy of a reliable prompt, and why examples (few-shot) usually beat exhortation. Advanced techniques follow — chain-of-thought, decomposition, structured output — each tied to why it works given how models process context. Production prompting is where it becomes real engineering: templates under version control, defending against prompt injection, and the evaluation fundamentals that tell you whether a prompt change actually helped rather than merely looked better. A cookbook of worked patterns closes the unit. The gate demands you diagnose and fix bad prompts, not define the terminology.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -2597,6 +2601,7 @@ export const aiImplementation = {
       "id": "m4",
       "title": "RAG Systems",
       "summary": "Retrieval-Augmented Generation — architecture, implementation, and production patterns.",
+      "intro": "Prompting hits a wall the moment you need the model to know your data — the policies, tickets, and contracts it never trained on. RAG is the standard answer, and this unit builds it end to end: the retrieve-then-generate architecture; chunking strategies and their trade-offs; vector search, and hybrid search for when keywords still matter; then the advanced patterns — re-ranking, query rewriting, multi-hop — that separate demos from systems. The production half is what makes this unit a reference: a deployment checklist, an evaluation methodology that measures retrieval and generation separately, and a troubleshooting guide organized by symptom. RAG is the highest-value and most-botched pattern in enterprise AI, which is why this is the course's largest unit.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -3635,6 +3640,7 @@ export const aiImplementation = {
       "id": "m5",
       "title": "AI Agents",
       "summary": "Autonomous systems that plan, use tools, and execute multi-step workflows.",
+      "intro": "RAG lets a model answer; agents let it act — plan, call tools, and iterate toward a goal. This unit builds them soberly: the agent loop and its architecture, tool design and function calling (where schema quality decides reliability), and multi-agent patterns with an honest account of their coordination costs. The second half is what production demands and demos skip: guardrails and safety layers that bound what an agent may do, evaluation and testing for systems whose failures are multi-step and probabilistic, state and memory patterns, and workflow orchestration for long-running processes. The through-line is a warning the industry keeps re-learning: autonomy multiplies both capability and failure modes, so every degree of freedom you grant must be one you can observe and revoke.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -4795,6 +4801,7 @@ export const aiImplementation = {
       "id": "m6",
       "title": "Enterprise Implementation",
       "summary": "Patterns for deploying AI in real organizations — strategy, architecture, and ROI.",
+      "intro": "The technology units are done; this unit is about making AI succeed inside an organization, which is a different problem. It opens with the five enterprise patterns — copilot, process automation, knowledge management, decision support, autonomous agents — as a selection framework keyed to risk tolerance and data readiness, then works through each pattern: where it fits, what its architecture looks like, and how it fails. The final lessons are the operational wrapper that determines whether any of it survives contact with the business: data strategy and governance, pilots designed to actually prove something, ROI measured honestly, and AI product experiences users trust. The gate grades pattern selection and pilot design against realistic scenarios — the judgment consulting engagements are priced on.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -6105,6 +6112,7 @@ export const aiImplementation = {
       "id": "m7",
       "title": "Production & Operations",
       "summary": "Deployment, monitoring, security, and LLMOps for production AI systems.",
+      "intro": "A working AI feature is not a shipped one. This unit is the operations layer: production architecture (gateways, queues, fallbacks across providers), LLMOps and monitoring — what to log and alert on when outputs are probabilistic, and how drift shows up before users complain — and the security and compliance surface: prompt injection, data leakage, and the regulatory constraints enterprises actually face. CI/CD for AI systems handles the novel problem that a 'code change' may be a prompt change whose regressions are statistical; cost management keeps spend observable and bounded; and Azure deployment patterns ground it all in the stack most enterprises run. The through-line: treat the model as an unreliable dependency and engineer accordingly.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -6898,6 +6906,7 @@ export const aiImplementation = {
       "id": "m8",
       "title": "Vision & Multimodal AI",
       "summary": "Beyond text — image understanding, document processing, and multimodal applications.",
+      "intro": "Text was the whole story until now; this unit adds eyes. Modern models accept images and documents natively, and the highest-ROI enterprise application is usually the least glamorous: document intelligence — extracting structured data from the invoices, contracts, and forms that previously required manual review. You will work through computer vision and document AI capabilities, multimodal application patterns (when to send an image versus OCR-then-text, and what each path costs), and a deep dive on document processing pipelines: classification, extraction, validation, and the human-review loop that catches the residual errors. The unit is deliberately practical — these systems are being deployed today — and the gate tests pipeline design, not model trivia.",
       "masteryThreshold": 0.85,
       "lessons": [
         {
@@ -7374,6 +7383,7 @@ export const aiImplementation = {
       "id": "m9",
       "title": "AI Strategy & Future",
       "summary": "Building an AI-first organization and positioning for what's next.",
+      "intro": "The closing unit steps back from systems to strategy: how an organization — and you personally — should position for a technology that keeps moving. Building an AI roadmap comes first: sequencing use cases by value and feasibility, build versus buy, and the capability investments in data, evaluation, and skills that compound across projects. Responsible AI follows as a governance problem: risk assessment, the regulatory landscape, and review processes that let you move fast without headlines. 'What's coming next' extrapolates carefully rather than breathlessly — agents, multimodality, cost curves — and the career lesson closes: positioning yourself as the person who bridges the technology and the business. The gate grades strategic judgment, not prediction.",
       "masteryThreshold": 0.85,
       "lessons": [
         {

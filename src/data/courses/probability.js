@@ -9,12 +9,15 @@ export const probability = {
   difficulty: "Lower-undergraduate",
   description:
     "Build probability the way a mathematician does: from sample spaces and the Kolmogorov axioms up to conditional probability and Bayes' theorem. Short, but the gates are real.",
+  overview:
+    "Probability is the mathematics of uncertainty: it takes the vague notion of 'how likely' and turns it into a number you can calculate with, so that reasoning about randomness becomes arithmetic instead of argument. It is the foundation under statistics, machine learning, risk, games, and measurement — and it is notoriously a place where confident intuition is simply wrong, which is exactly why it has to be built carefully from the ground up.\n\nThis course builds it the way a mathematician does, on three pillars. **The sample space**: randomness is modeled as a set of possible outcomes, and events are subsets of it — probability is set theory with numbers attached. **The Kolmogorov axioms**: three short rules — non-negativity, total probability one, additivity over disjoint events — from which every other law (complements, unions, bounds) is *derived*, not asserted. **Conditioning**: probability updated by evidence, where the definition of conditional probability leads to the law of total probability and Bayes' theorem — and to the base-rate reasoning that human intuition reliably gets backwards.\n\nThe arc is short and deliberate. Unit 1 constructs the foundation: outcomes, events, the axioms, and the laws that follow from them. Unit 2, unlocked by mastering unit 1, builds conditioning: conditional probability, independence, total probability, and Bayes' theorem, applied to the classic traps — medical testing, false positives — where the formal machinery earns its keep.\n\nThis is a compact course — two units, a demonstration of the platform at full rigor rather than a full semester — but the gates are real: you must compute, derive, and explain, not merely recognize. By the end you should be able to model a random situation as a sample space, derive probabilities from the axioms rather than quote them, and update beliefs with Bayes' theorem correctly in exactly the cases where unaided intuition fails.",
   sources: ["Demonstration course — generated to validate the platform"],
   units: [
     {
       id: "u1",
       title: "Sample Spaces & the Axioms",
       summary: "What randomness is made of, and the three rules every probability obeys.",
+      intro: "The course begins by building the object everything else stands on. Randomness is modeled as a sample space — the set of all possible outcomes — and events are subsets of it, so the machinery of sets (union, intersection, complement) becomes the language of chance before any number appears. Then the Kolmogorov axioms: three short rules — probabilities are non-negative, the whole space has probability one, and disjoint events add — from which every familiar law (complements, inclusion-exclusion, monotonicity) is derived in front of you rather than asserted. Two lessons, deliberately compact: the discipline of deriving-from-axioms is the actual content of the unit, and the mastery gate demands derivations, not definitions, before Unit 2 unlocks.",
       masteryThreshold: 0.85,
       lessons: [
         {
@@ -136,6 +139,7 @@ export const probability = {
       id: "u2",
       title: "Conditional Probability & Bayes",
       summary: "How evidence updates belief — and why your intuition about it is usually wrong.",
+      intro: "Unit 1 assigned probabilities to a fixed world; this unit lets evidence change them. Conditional probability is defined rather than intuited — P(A|B) as the share of B's probability where A also holds — and from that single definition the law of total probability and Bayes' theorem both fall out as short derivations you will reproduce yourself. The payoff is the course's sharpest lesson: base rates dominate. Worked through the classic medical-testing example, a highly accurate test for a rare condition still yields mostly false positives — the calculation almost everyone's intuition gets backwards until the machinery does it for them. Independence rounds out the toolkit. The gate closes the course by demanding the full Bayesian computation, defended step by step.",
       prerequisites: ["u1"],
       masteryThreshold: 0.85,
       lessons: [

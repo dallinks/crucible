@@ -48,7 +48,7 @@ if (!course) {
 
 const SYSTEM = `You are a demanding textbook editor reviewing a lesson for a rigorous self-study platform. The bar is a section of a good university textbook: it develops ideas, proves what it asserts, works its examples step by step, and leaves the reader able to solve new problems.
 
-Grade the lesson against each criterion strictly. Padding, bullet-point enumeration dressed as exposition, hand-waving ("it can be shown that..."), examples that state a result without showing the work, and exercises that only test recall of the text all FAIL their criteria. Judge from the lesson text alone — assume the reader has only the prerequisites and this text.`;
+Grade the lesson against each criterion strictly. Padding, bullet-point enumeration dressed as exposition, hand-waving ("it can be shown that..."), examples that state a result without showing the work, and exercises that only test recall of the text all FAIL their criteria. Depth is reaching transfer in the fewest words that get there: verbose restatement, re-explaining the same idea in new clothes, and narration that adds length but not load FAIL the first criterion exactly as padding does. Judge from the lesson text alone — assume the reader has only the prerequisites and this text.`;
 
 const CRITERIA = [
   "DEVELOPS rather than enumerates: ideas are motivated, built up, and connected in flowing exposition — not a list of assertions or definitions strung together",
@@ -56,6 +56,7 @@ const CRITERIA = [
   "Examples are WORKED: each example shows the actual steps a reader would take, with intermediate values/reasoning visible, not a summary of the outcome",
   "Exercises demand TRANSFER and are solvable from this text alone: a diligent novice who mastered this lesson (and its prerequisites) could do them, and they require applying the ideas to new cases, not restating the text",
   "Self-contained and honest: terminology is defined before use, notation is consistent, and the content plausibly fills the claimed estMinutes of real study time",
+  "BRIDGED into the arc: unless it opens the course, the lesson's opening names what earlier material it builds on and the problem that material left open, and its close states what has now been established and where it leads; where the course's running example is relevant, the lesson engages it — the lesson reads as a section of a book, not a standalone article",
 ];
 
 const VERDICT_SCHEMA = {
@@ -83,9 +84,19 @@ const VERDICT_SCHEMA = {
 
 function lessonPrompt(unit, lesson) {
   const rubric = CRITERIA.map((c, i) => `${i + 1}. ${c}`).join("\n");
+  const i = unit.lessons.indexOf(lesson);
+  const prev = unit.lessons[i - 1];
+  const next = unit.lessons[i + 1];
+  const position =
+    `lesson ${i + 1} of ${unit.lessons.length} in this unit` +
+    (prev ? `; previous: "${prev.title}"` : "; first lesson of the unit") +
+    (next ? `; next: "${next.title}"` : "; last lesson before the mastery check");
   return [
     `COURSE: ${course.title} (${course.difficulty || "unspecified level"})`,
+    `COURSE OVERVIEW (orientation shown to the learner):\n${course.overview || "—"}`,
     `UNIT: ${unit.title}`,
+    `UNIT INTRO (chapter opener shown to the learner):\n${unit.intro || "—"}`,
+    `POSITION: ${position}`,
     `LESSON: ${lesson.title} — claims ${lesson.estMinutes} minutes of study`,
     `RUBRIC:\n${rubric}`,
     `LESSON CONTENT (structured blocks, JSON):\n${JSON.stringify(lesson.content, null, 1)}`,

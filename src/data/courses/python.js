@@ -42,6 +42,8 @@ export const python = {
   difficulty: "Professional",
   description:
     "Python as a specification you can reason about: objects with identity/type/value, names as bindings in compile-time-resolved namespaces, syntax as sugar over type-level protocols, and frames as the substrate of closures, generators, and coroutines. Results are proved where provable — the hash/eq invariant, the attribute-lookup precedence theorem, C3 linearization, amortized append, GIL non-atomicity, function-subtyping contravariance — and gates demand transfer: predict the binding, find the aliasing bug, derive the MRO, prove the race.",
+  overview:
+    "Most Python instruction is a tour of features: syntax, common types, some library recipes. It produces programmers who can write Python but cannot *predict* it — who debug by experiment when a list changes underneath them or a default argument remembers state, because their mental model came from folklore. This course takes the opposite route: it teaches the **language model** — the small set of rules from which Python's behavior follows — so that surprises become derivations.\n\nFour pillars, taken from CPython's own vocabulary, carry everything. **Objects**: every value is an object with identity, type, and value, and names are bindings in namespaces — tags on objects, never boxes holding them. **Protocols**: every syntactic form — `a + b`, `for x in xs`, `with`, `obj.attr`, `await` — is sugar over a documented protocol dispatched on the type, which is why any class can participate in any syntax. **Frames**: execution is a stack of frames whose lifetimes explain closures, generators, and coroutines as one mechanism, not three separate features. **Cost and contracts**: the built-in data structures have provable cost models, and types, invariants, and tests are the discipline that keeps large programs honest.\n\nThe arc: units 1–2 establish objects, names, scope, and closures — the binding rules most bugs trace back to. Units 3–5 cover the protocol layer: the data model, iteration and generators, and functions as objects. Units 6–7 take on classes, the MRO, descriptors, exceptions, and resource management — the machinery of larger programs. Units 8–10 finish with the engineering layer: data-structure cost, concurrency and the GIL, and typing and property-based testing.\n\nThroughout, what can be proved is proved — the hash/eq invariant, attribute-lookup precedence, C3 linearization, amortized O(1) append, the non-atomicity of `+=` under the GIL — because a rule you have seen derived is one you can rely on under pressure. By the end you should be able to predict behavior from the semantics rather than run-and-see, diagnose aliasing, scope, and concurrency bugs by reasoning, and defend design choices with the cost model. The gates test transfer: predict the binding, derive the MRO, prove the race.",
   sources: [
     "The Python Language Reference, 3.13 — §3 Data Model, §4 Execution Model, §6 Expressions, §7–8 Statements (docs.python.org)",
     "The Python Standard Library reference — builtins, collections, itertools, functools, contextlib, dataclasses, typing, asyncio",
@@ -63,6 +65,7 @@ export const python = {
       "id": "u1",
       "title": "Objects, Names, and Binding",
       "summary": "The three-part definition of an object, assignment as binding rather than copying, aliasing and mutation, the hash/eq invariant that dictionary correctness rests on, and what copying actually duplicates.",
+      "intro": "The course opens with the substitution everything else depends on: replacing the variable-as-box model with Python's actual model — objects that live in their own right, and names that are bindings in namespaces, tags rather than containers. This unit makes the three-part definition of an object (identity, type, value) precise, shows that assignment binds and never copies, and works through what aliasing therefore means: which operations act on the object, visible through every name, versus on a binding, local to one namespace. The hash/eq invariant then connects object identity to dictionary correctness — why mutable objects refuse to hash — and copying gets its honest treatment: what shallow and deep copies each actually duplicate. Every unit that follows conjugates this vocabulary; the gate makes you predict programs with it.",
       "references": [
         "Python Language Reference §3.1 — Objects, values and types",
         "Python Language Reference §7.2 — Assignment statements (target lists, augmented assignment)",
@@ -205,6 +208,7 @@ export const python = {
         {
           "id": "u1l2",
           "title": "Identity, Equality, and the Hash Contract",
+          "builds_on": ["u1l1"],
           "estMinutes": 24,
           "content": [
             {
@@ -338,6 +342,7 @@ export const python = {
         {
           "id": "u1l3",
           "title": "Mutability, Copying, and the Cost of Sharing",
+          "builds_on": ["u1l1", "u1l2"],
           "estMinutes": 24,
           "content": [
             {
@@ -585,6 +590,7 @@ export const python = {
       "id": "u2",
       "title": "Namespaces, Scope, and Closures",
       "summary": "Scope as a compile-time property of a code block, the local-determination rule behind UnboundLocalError, closures as functions plus cells with late-binding reads, and modules as cached singleton namespaces.",
+      "intro": "Names bind in namespaces — but which namespace? This unit reveals that the answer is decided before your code runs: scope in Python is a compile-time property of the code block, and the local-determination rule (an assignment anywhere in a function makes the name local everywhere in it) is the actual explanation of UnboundLocalError, not a runtime quirk. Closures follow mechanically: a nested function carries cells referencing enclosing variables, and it reads them late — at call time, not definition time — which is why every closure created in a loop sees the final value, and what nonlocal actually rebinds. Modules complete the namespace story: an import executes a file once and caches the resulting namespace, making modules singletons with everything that implies. The gate asks you to predict bindings cold.",
       "references": [
         "Python Language Reference §4.2 — Naming and binding (blocks, scopes, free variables, the global and nonlocal statements)",
         "Python Language Reference §7.12–7.13 — The global and nonlocal statements",
@@ -1244,6 +1250,7 @@ export const python = {
       "id": "u3",
       "title": "The Data Model: Protocols and Dispatch",
       "summary": "Syntax as sugar over special methods looked up on the type, the binary-operator dispatch algorithm with reflection and subclass priority, and the container protocols that make a user class behave like a built-in.",
+      "intro": "With names and objects settled, this unit exposes the machine underneath Python's syntax: every operator, call, indexing, and iteration desugars to a special method — and the lookup happens on the type, not the instance, which is why assigning __add__ onto an object does nothing. Binary operators get the full dispatch algorithm: the left operand's method first, NotImplemented as the signal to try the right operand's reflected method, and the subclass-priority rule that lets subclasses win. The container protocols then show the payoff: implement __getitem__, __len__, and __contains__ correctly and your class behaves like a built-in everywhere, including the fallback chains older protocols still feed. Units 4 through 6 are this unit applied to iteration, functions, and classes. The gate asks you to derive dispatch outcomes.",
       "references": [
         "Python Language Reference §3.3 — Special method names (basic customization, emulating container types, numeric types)",
         "Python Language Reference §6.10 / §6.7 — Comparisons and the binary arithmetic dispatch rules",
@@ -1780,6 +1787,7 @@ export const python = {
       "id": "u4",
       "title": "Iteration and Generators",
       "summary": "The iterator protocol and the exact desugaring of `for`, generators as resumable frames with send/throw/close and `yield from` delegation, and lazy pipelines whose space cost is independent of stream length.",
+      "intro": "This unit applies the protocol lesson to Python's most pervasive construct: the for loop. You will desugar it exactly — iter(), next(), StopIteration — and see the iterator/iterable distinction that explains why files exhaust and lists do not. Generators then reveal what frames make possible: a generator is a resumable frame, suspended at yield with all its local state intact, which is why generators are the cheapest way to write iterators and why send, throw, close, and yield-from delegation behave the way they do. The closing lesson builds lazy pipelines: chained generators whose memory cost is independent of stream length — the idiom that processes a terabyte in constant space. Unit 9's coroutines are this same machinery with a scheduler attached. The gate makes you trace suspension and resumption exactly.",
       "references": [
         "Python Language Reference §6.2.9 / §8.3 — Yield expressions; The for statement",
         "The Python Standard Library — itertools (recipes and building blocks), functools.reduce, contextlib",
@@ -2325,6 +2333,7 @@ export const python = {
       "id": "u5",
       "title": "Functions as Objects",
       "summary": "The argument-binding algorithm and what parameter kinds commit you to, the def-time evaluation of defaults and the trap it creates, and decorators as function transformers with a provable stacking order.",
+      "intro": "Functions have been called since the first lesson; this unit finally examines the call itself. The argument-binding algorithm — positionals, keywords, defaults, *args, **kwargs, and the positional-only and keyword-only markers — is a precise procedure you will run by hand, because what a signature commits you to is an API-design decision. Defaults expose a def-time truth: they are evaluated once, when def executes, which is the complete explanation of the mutable-default trap and of why a default cannot see call-time state. Decorators close the unit as the payoff of functions being objects: a decorator is a function transforming a function, sugar for f = deco(f), with a provable inside-out stacking order and functools.wraps preserving identity. The gate demands prediction, not vocabulary.",
       "references": [
         "Python Language Reference §8.7 — Function definitions (parameter kinds, defaults, decorators); §6.3.4 — Calls",
         "PEP 3102 — Keyword-Only Arguments; PEP 570 — Python Positional-Only Parameters",
@@ -2799,6 +2808,7 @@ export const python = {
       "id": "u6",
       "title": "Classes, MRO, and Descriptors",
       "summary": "The attribute-lookup precedence algorithm that explains methods, properties, and slots; C3 linearization and what super() actually proxies; the descriptor protocol underneath all of it; and how a class statement builds a class.",
+      "intro": "This is the course's deepest dive: what obj.attr actually does. The attribute-lookup precedence theorem — data descriptors on the type, then the instance dict, then non-data descriptors and class attributes — explains in one rule why methods bind, why properties intercept assignment, and why __slots__ conflicts with instance dicts. Multiple inheritance gets the real algorithm: C3 linearization, which you will compute by hand, with its monotonicity guarantee — and super() revealed as a proxy over the linearization, not a call to 'the parent'. The descriptor protocol then shows that methods, properties, classmethods, and staticmethods are one mechanism, not four features; class creation closes the unit — the class statement as a call to a metaclass, with __init_subclass__ as the modern alternative. The gate asks you to derive MROs and lookup outcomes.",
       "references": [
         "Python Language Reference §3.3.2 — Customizing attribute access; §3.3.2.2 — Implementing descriptors",
         "Guido van Rossum — 'The Python 2.3 Method Resolution Order' (python.org) and 'Unifying types and classes in Python 2.2'",
@@ -3594,6 +3604,7 @@ export const python = {
       "id": "u7",
       "title": "Exceptions and Resources",
       "summary": "Exceptions as control flow with a matching rule and a chain, the try/finally and with-statement guarantees that make cleanup provable, and the design question of where a failure should be handled.",
+      "intro": "Failure gets the same rigorous treatment success has received. The exception model first: raising unwinds frame by frame, the matching rule is an isinstance test against each except clause in order, and the chaining machinery preserves the causal history that naive re-raising destroys — with EAFP as the idiom the model makes natural. The resource-safety theorem follows: try/finally's guarantee, and the with statement as its packaging via __enter__ and __exit__ — the proof that cleanup runs on every exit path is what makes resource code trustworthy, and contextlib makes writing managers cheap. The closing lesson is design judgment: where a failure should be handled (boundaries), when retrying is sound, and exception groups for concurrent failures. The gate poses both derivations and design calls.",
       "references": [
         "Python Language Reference §8.4–8.6 — The try statement, The with statement, The raise statement; §4.3 Exceptions",
         "PEP 343 — The 'with' Statement; PEP 3134 — Exception Chaining and Embedded Tracebacks",
@@ -4069,6 +4080,7 @@ export const python = {
       "id": "u8",
       "title": "Data Structures and Cost",
       "summary": "Lists as dynamic arrays with amortized O(1) append, dicts and sets as compact open-addressed hash tables with expected O(1) lookup and guaranteed insertion order, and the ordering layer — Timsort's stability, key functions, heaps, and bisect.",
+      "intro": "The semantics are complete; this unit adds the cost model. Lists are dynamic arrays: you will run the amortized analysis proving append is O(1) over any sequence despite occasional full-array copies — and see why inserting at the front is O(n) forever. Dicts and sets are open-addressed hash tables, compact and insertion-ordered, with the expected O(1) lookup that Unit 1's hash/eq invariant underwrites — and worst cases an adversary can force. The ordering layer closes the unit: Timsort and the stability guarantee that makes multi-pass sorting sound, key functions versus comparators, heaps for rolling extremes, and bisect for sorted membership. The unit's discipline is choosing structures from proven costs rather than habit; the gate makes you defend the choice with the analysis.",
       "references": [
         "CPython source — Objects/listobject.c (list_resize growth policy), Objects/dictobject.c (compact layout, open addressing), Objects/setobject.c",
         "Tim Peters — Objects/listsort.txt (the Timsort design note in the CPython source tree)",
@@ -4706,6 +4718,7 @@ export const python = {
       "id": "u9",
       "title": "Concurrency: Threads, the GIL, and asyncio",
       "summary": "What the GIL does and does not guarantee, proved by interleaving; coroutines as cooperatively scheduled resumable frames with suspension only at await points; and a decision procedure for choosing threads, tasks, or processes.",
+      "intro": "Concurrency is where folklore is most dangerous, so this unit proves its claims by interleaving. The GIL first, stated exactly: one thread executes bytecode at a time — which serializes bytecodes but does not make read-modify-write atomic, and you will construct the interleaving that makes counter += 1 lose updates under threads. asyncio then reframes Unit 4's machinery: coroutines are resumable frames scheduled cooperatively, suspended only at await points — a guarantee that eliminates data races between awaits, at the price that blocking anywhere blocks everything. The closing lesson is a decision procedure: I/O-bound and many-connection work to tasks, CPU-bound work to processes, blocking libraries to thread pools — with free-threaded CPython noted as the changing landscape. The gate makes you prove the race and pick the model.",
       "references": [
         "Python Language Reference / FAQ — 'What kinds of global value mutation are thread-safe?'; the threading, queue, and concurrent.futures documentation",
         "PEP 703 — Making the Global Interpreter Lock Optional in CPython (free-threaded builds, 3.13 experimental / 3.14 supported)",
@@ -5297,6 +5310,7 @@ export const python = {
       "id": "u10",
       "title": "Types, Contracts, and Tests",
       "summary": "Annotations as a separate static layer over a dynamic language, the variance rules that decide which substitutions are safe (proved, not asserted), and testing as an executable specification with a precise account of what it can and cannot establish.",
+      "intro": "The closing unit is about confidence in programs too large to hold in your head. Gradual typing first: annotations as a static layer the runtime ignores, checked by external tools — what a type means as a set of values, Optional as honesty about None, and Protocols giving duck typing a checkable form. Variance is the unit's theorem: which substitutions are safe — covariant returns, contravariant parameters — proved from the substitution principle rather than memorized, which is exactly why list[Dog] is not list[Animal]. Testing closes the course as executable specification: pytest's model, fixtures, parametrization, and property-based testing with Hypothesis — including a precise account of what a passing suite does and does not establish. The gate grades the contracts you write and the reasoning behind them.",
       "references": [
         "PEP 484 (type hints), PEP 544 (protocols), PEP 585/604 (builtin generics, X | Y), PEP 612 (ParamSpec), PEP 695 (type parameter syntax), PEP 742 (TypeIs)",
         "PEP 649/749 — Deferred evaluation of annotations (Python 3.14) and the annotationlib module",

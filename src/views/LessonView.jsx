@@ -13,6 +13,16 @@ export function LessonView({ courseId, unitId, lessonId, onGo }) {
   const done = progress.lessonsComplete.includes(lesson.id);
   const next = unit.lessons[idx + 1];
   const cardCount = lesson.reviewItems?.length || 0;
+  // Resolve builds_on ids to their lessons (any unit) for the breadcrumb.
+  const buildsOn = (lesson.builds_on || [])
+    .map((id) => {
+      for (const u of course.units) {
+        const l = u.lessons.find((x) => x.id === id);
+        if (l) return { unit: u, lesson: l };
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   return (
     <Page>
@@ -36,6 +46,23 @@ export function LessonView({ courseId, unitId, lessonId, onGo }) {
         <h1 style={{ fontSize: "clamp(30px,5vw,44px)", fontWeight: 400, lineHeight: 1.15, letterSpacing: "-0.02em", margin: "0 0 44px", color: theme.textStrong }}>
           {lesson.title}
         </h1>
+
+        {buildsOn.length > 0 && (
+          <div style={{ fontFamily: theme.font.mono, fontSize: 12, color: theme.textFaint, letterSpacing: 0.4, margin: "-30px 0 40px" }}>
+            builds on{" "}
+            {buildsOn.map((b, i) => (
+              <span key={b.lesson.id}>
+                {i > 0 && " · "}
+                <span
+                  onClick={() => onGo("lesson", { courseId, unitId: b.unit.id, lessonId: b.lesson.id })}
+                  style={{ color: theme.accent.sage, cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}
+                >
+                  {b.lesson.title}
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
 
         <Blocks items={lesson.content} />
 

@@ -13,6 +13,8 @@ export const entrepreneurship = {
   difficulty: "Graduate / MBA",
   description:
     "The disciplined, evidence-based founder's path from a raw idea to a scalable company — anchored in MIT's Disciplined Entrepreneurship, Lean Startup, and Customer Development. The judgment is graded against operator rubrics, not multiple choice.",
+  overview:
+    "Startups rarely die because the product could not be built. They die because nobody wanted it, because the economics of selling it never worked, or because the company scaled before either question was answered. Entrepreneurship, as this course teaches it, is the discipline of attacking those risks in the right order: treating a company as a stack of hypotheses — about the customer, the pain, the product, the channel, the economics — and testing the deadliest ones first with evidence rather than confidence.\n\nThe course is anchored in the canon that professionalized the field — MIT's Disciplined Entrepreneurship, Steve Blank's Customer Development, the Lean Startup, Crossing the Chasm, and the Y Combinator playbook — and rests on four pillars. **Market first**: segment, choose a beachhead, and size it bottom-up before building anything. **Evidence over opinion**: get out of the building, and run interviews and experiments that can falsify the plan. **Unit economics**: a business is viable when CAC, LTV, and payback say so, not when the pitch deck does. **Staged scaling**: what wins early adopters is not what crosses the chasm, and premature scaling is the classic self-inflicted death.\n\nThe arc follows the order in which a real venture must de-risk. Units 1–3 find and validate the market: customers and the beachhead, the value proposition and MVP, and customer development. Units 4–6 make the machine work: business model and unit economics, go-to-market and sales, growth and retention. Units 7–9 build the company around it: fundraising and financing, team and execution, strategy and moats.\n\nThere is little here to memorize and much to judge, so the gates are graded by an operator's rubric: specific, customer-grounded, quantified reasoning scores; buzzwords and top-down hand-waving do not. By the end you should be able to take a raw idea and produce the artifacts an investor or cofounder would take seriously — a defended beachhead choice, a bottom-up market size, a testable value proposition, an honest unit-economics model, and a staged go-to-market plan.",
   sources: [
     "Bill Aulet — Disciplined Entrepreneurship (MIT 15.390)",
     "Steve Blank — The Startup Owner's Manual / Customer Development",
@@ -27,6 +29,7 @@ export const entrepreneurship = {
       id: "e1",
       title: "Markets & Customers",
       summary: "Pick a beachhead, know exactly who the customer is, and size the market from the bottom up.",
+      intro: "The course begins where the evidence says startups actually live or die: the market. Before any product exists, the discipline is choosing whom to serve — segmenting the possible markets, picking a single beachhead you can dominate rather than a broad market you can only wave at, and defining the customer concretely enough (persona, end user, economic buyer) that every later decision has a referee. The unit closes with bottom-up market sizing: TAM, SAM, and SOM built from countable units — customers times price — rather than top-down analyst percentages. These three lessons are the foundation every later unit assumes: the value proposition of Unit 2 is designed for this customer, and the unit economics of Unit 4 are computed on this market. The gate grades specificity; 'everyone who eats' fails it.",
       masteryThreshold: 0.85,
       lessons: [
         {
@@ -421,6 +424,7 @@ export const entrepreneurship = {
       id: "e2",
       title: "Value Proposition & MVP",
       summary: "Design and quantify the value you deliver, build the smallest thing that tests it, and recognize product-market fit.",
+      intro: "Unit 1 chose the customer; this unit decides what you will promise them — and how you will find out, cheaply, whether the promise matters. You will design a value proposition that is quantified, not adjectival ('cuts invoice processing from six days to one', not 'faster and easier'), then build the minimum viable product: not a worse version of your product but the smallest instrument that tests the riskiest assumption. The unit ends with product-market fit — what it actually looks like in retention and pull rather than in press coverage, and the honest signals that you do not have it yet. The gate is judgment-graded: vague value claims and feature-list MVPs score exactly as they would with an investor.",
       prerequisites: ["e1"],
       masteryThreshold: 0.85,
       lessons: [
@@ -763,6 +767,7 @@ export const entrepreneurship = {
       id: "e3",
       title: "Customer Development & Validation",
       summary: "Get out of the building, run honest interviews and experiments, and decide when to pivot or persevere.",
+      intro: "A value proposition and an MVP are hypotheses; this unit is the discipline of testing them against reality — Customer Development, in Steve Blank's phrase 'getting out of the building.' You will learn to run interviews that produce evidence instead of politeness, following the Mom Test rules: ask about past behavior, never pitch, never ask 'would you buy it?'. You will design cheap experiments with pass/fail criteria committed in advance, and — the hardest lesson — make the pivot-or-persevere decision on the evidence rather than on sunk cost and founder hope. This validation loop is the engine the rest of the course assumes is running: the economics of Unit 4 and the go-to-market of Unit 5 are only as good as the evidence feeding them.",
       prerequisites: ["e2"],
       masteryThreshold: 0.85,
       lessons: [
@@ -1060,6 +1065,7 @@ export const entrepreneurship = {
       id: "e4",
       title: "Business Model & Unit Economics",
       summary: "How you make money, how you price it, and the per-customer math (CAC, LTV, payback) that decides whether growth helps or kills you.",
+      intro: "You know the customer and the promise; now comes the arithmetic that decides whether serving them is a business. This unit builds the model: how you charge (the business-model menu and the pricing logic behind it), then the per-customer math — the cost to acquire a customer (CAC), their lifetime value (LTV), the LTV:CAC ratio, and the payback period that governs how fast growth consumes cash. The third lesson delivers the course's most counterintuitive warning: with bad unit economics or high churn, growth accelerates death, and scale is the murder weapon. Every number here feeds directly into the fundraising conversations of Unit 7, and the gate makes you compute and interpret the model, not define its acronyms.",
       prerequisites: ["e3"],
       masteryThreshold: 0.85,
       lessons: [
@@ -1380,6 +1386,7 @@ export const entrepreneurship = {
       id: "e5",
       title: "Go-to-Market & Sales",
       summary: "Choose a motion that fits your price and customer, cross the chasm to the mainstream, and position so the right people buy.",
+      intro: "The economics of Unit 4 assumed customers arrive; this unit is how they actually do. You will choose a go-to-market motion — self-serve, inside sales, field sales, product-led — as a function of price point and customer, because a $50-a-month product cannot afford a salesperson and a $500k platform cannot be bought from a webpage. Moore's chasm supplies the unit's central drama: the early adopters who loved you are not evidence the mainstream will follow, and crossing requires dominating a niche, not broadening the marketing. Positioning and founder-led sales close the unit — why the founder must sell first, and what those first sales calls are really for (learning, not revenue). The gate demands a motion matched to the numbers.",
       prerequisites: ["e4"],
       masteryThreshold: 0.85,
       lessons: [
@@ -1676,6 +1683,7 @@ export const entrepreneurship = {
       id: "e6",
       title: "Growth & Retention",
       summary: "The AARRR funnel, why retention is the foundation, and the engines of growth — sticky, viral, and paid.",
+      intro: "Acquisition through one channel gets you started; this unit is the machinery of compounding. The AARRR funnel — acquisition, activation, retention, referral, revenue — gives the whole customer journey a measurable spine, and the unit's central claim is that retention is its foundation: a leaky bucket makes every upstream effort pointless, which is why retention cohorts, not signup counts, are the first chart a serious operator reads. From there, the engines of growth — sticky, viral, and paid — each with its governing metric (churn, the viral coefficient, CAC payback), and the honest math of virality that almost no product achieves. Unit 4's economics reappear here as the constraint every engine must satisfy. The gate asks you to diagnose funnels, not recite their letters.",
       prerequisites: ["e5"],
       masteryThreshold: 0.85,
       lessons: [
@@ -1993,6 +2001,7 @@ export const entrepreneurship = {
       id: "e7",
       title: "Fundraising & Financing",
       summary: "Whether to raise at all, how VC math works, and the cap-table and term-sheet mechanics that decide what founders keep.",
+      intro: "With a working machine, the question becomes fuel: whether to raise outside capital at all, and on what terms. This unit starts with the fork most founders skip — bootstrapping versus venture, and the power-law logic that makes VCs need outcomes founders may not — then walks the stages from pre-seed onward and the cap-table mechanics: dilution round by round, option pools that come out of the founders' side, and SAFEs converting at caps. Term sheets close the unit: liquidation preferences, anti-dilution, and board control — the clauses that decide what founders actually keep, worked through numerically rather than described. Unit 4's unit economics are your negotiating leverage here; the gate makes you run the cap-table math and read a term sheet like an operator.",
       prerequisites: ["e6"],
       masteryThreshold: 0.85,
       lessons: [
@@ -2313,6 +2322,7 @@ export const entrepreneurship = {
       id: "e8",
       title: "Team, Org & Execution",
       summary: "Why the team is the bet, how to split equity and vest it, and how early hiring and execution differ from a big company.",
+      intro: "Investors say they bet on teams; this unit takes that claim seriously as an engineering problem. It opens with the founding team itself — why solo founders and co-founder conflict are the two classic killers, and what complementary actually means — then the equity split and vesting: why equal splits are often wrong, why four-year vesting with a one-year cliff protects everyone, worked with the Unit 7 cap-table math. The final lesson is early hiring and execution: why the first ten hires are generalists sold on the mission, why A-players compound, and the operating cadence — weekly metrics, ruthless prioritization — that separates startups that ship from startups that drift. The gate is operator-graded judgment on scenarios, not HR vocabulary.",
       prerequisites: ["e7"],
       masteryThreshold: 0.85,
       lessons: [
@@ -2622,6 +2632,7 @@ export const entrepreneurship = {
       id: "e9",
       title: "Strategy, Moats & Scaling",
       summary: "Competitive structure, what makes an advantage durable, and when to scale at all costs versus sustainably.",
+      intro: "The closing unit lifts to strategy: assuming the machine works, what stops someone better-funded from copying it — and how hard should you press the accelerator? Porter's five forces give the structural map of where profit survives; the moat catalog — network effects, switching costs, scale economies, brand — sorts durable advantage from mere head starts, with the sober warning that most early 'moats' are neither. The final lesson weighs blitzscaling against sustainable growth: when winner-take-most dynamics justify prioritizing speed over efficiency, and when Unit 4's economics say that same choice is suicide. As the course's synthesis it draws on everything — segmentation, economics, funding — and the gate asks for strategic judgment defended with the numbers.",
       prerequisites: ["e8"],
       masteryThreshold: 0.85,
       lessons: [

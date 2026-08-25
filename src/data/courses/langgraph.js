@@ -16,6 +16,8 @@ export const langgraph = {
   difficulty: "Professional / Graduate",
   description:
     "A rigorous, build-first path from LangChain's Runnable abstraction to LangGraph's graph execution model — state machines, durable agents, RAG, and multi-agent systems. Grounded in the official docs and the foundational agent papers; the gates make you design and reason about real graphs, not recite APIs.",
+  overview:
+    "An LLM by itself answers one message at a time. An **agent** is what you get when a model can decide to act — call tools, read your data, loop, recover from failures — and building one that behaves reliably is a systems problem, not a prompting trick. This course teaches that systems problem through LangChain and LangGraph: LangChain's Runnable abstraction as the composable on-ramp, and LangGraph's graph execution model as the rigorous core for agents that must be durable, inspectable, and controllable.\n\nThree pillars carry the course. **Composition**: models, prompts, tools, and retrieval as Runnables you pipe together — the LCEL layer everything else builds on. **Graph execution**: a LangGraph application is a state machine — a StateGraph of nodes executing in Pregel-style super-steps, with writes merged into shared state by reducers through channels. That model, borrowed from large-scale graph processing, is what makes cycles, branching, and interruption well-defined instead of ad hoc. **Statefulness**: checkpointing turns a graph into a durable process — resumable threads, short- and long-term memory, human-in-the-loop approval — which is what separates a production agent from a demo loop.\n\nThe arc: units 1–3 build the LLM-app layer — Runnables and LCEL, tool calling and the reason→act→observe loop, and retrieval-augmented generation with the embedding math underneath it. Units 4–6 are the LangGraph core: the execution model, state and control flow, and persistence with human-in-the-loop. Units 7–9 assemble and ship: the canonical agent architectures (ReAct, reflection, planning), multi-agent systems, and evaluation, observability, and production.\n\nThe APIs here were verified against the current docs, but the framework moves fast — what this course guarantees is the durable layer: the execution model, the agent patterns, and the foundational papers, which is also what transfers to any other agent framework. By the end you should be able to design an agent as a graph, reason about its state merges and termination, make it durable and interruptible, and evaluate it before trusting it. The gates make you design and defend real graphs, not recite APIs.",
   sources: [
     "LangChain & LangGraph official documentation (docs.langchain.com/oss/python, 2026)",
     "Yao et al. — ReAct: Synergizing Reasoning and Acting in Language Models (2022)",
@@ -30,6 +32,7 @@ export const langgraph = {
       id: "lg1",
       title: "LLM Apps & the Runnable Abstraction (LCEL)",
       summary: "The composable primitive: chat models, messages, prompts, and the Runnable/LCEL interface that everything is built on.",
+      intro: "The course opens at the layer everything else composes on: LangChain's model abstraction. You will work with chat models and the message types that structure a conversation, build prompt templates that turn user input into model calls, and meet the Runnable interface — the uniform invoke/stream/batch contract that lets models, prompts, parsers, and retrievers snap together into chains with LCEL's pipe operator. The closing lesson makes outputs dependable: structured output bound to schemas, and the retry and fallback machinery reliability demands. None of this is an agent yet — a chain is a fixed pipeline — but every node you later put in a graph is built from exactly these parts, so the gate insists you can compose and debug them cold.",
       masteryThreshold: 0.85,
       references: [
         "LangChain docs — Models, Messages & Prompts (docs.langchain.com/oss/python/langchain/models)",
@@ -344,6 +347,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg2",
       "title": "Tools & Tool Calling",
       "summary": "Give the model hands: define tools, run the reason→act→observe loop, and see why that loop is a cycle LCEL can't express.",
+      "intro": "Unit 1's chains can transform text but cannot act. This unit gives the model hands: tools — typed, described functions the model can request — and the tool-calling loop in which the model reasons, chooses an action, observes the result, and continues. That reason→act→observe cycle (the ReAct pattern from the foundational papers) is the seed of every agent in this course, and it immediately raises the engineering problems the rest of the course exists to solve: malformed arguments, tool errors the model must see and recover from, and runaway loops that never terminate. LCEL's acyclic pipes cannot express this cycle — the limitation that motivates LangGraph in Unit 4. The gate makes you build the loop and break it on purpose.",
       "prerequisites": [
         "lg1"
       ],
@@ -728,6 +732,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg3",
       "title": "Retrieval-Augmented Generation (RAG)",
       "summary": "Ground the model in your data: embeddings and the cosine-similarity math, chunking trade-offs, retrieval strategies, and the RAG chain.",
+      "intro": "An agent that can act still knows only its training data. This unit grounds it in your data: retrieval-augmented generation. You will build the embedding layer first — text as vectors, cosine similarity as the distance that makes 'semantically close' computable — then face the decisions that dominate RAG quality in practice: how to chunk documents and what each trade-off costs, which retrieval strategy to use beyond naive top-k (hybrid search, re-ranking, query transformation), and how retrieved context is assembled into the generation prompt. The result is the RAG chain, still pure LCEL. When agents return in Unit 7, retrieval becomes a tool they choose to call; the discipline for knowing whether any of it works arrives in Unit 9.",
       "prerequisites": [
         "lg1"
       ],
@@ -1120,6 +1125,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg4",
       "title": "The Graph Execution Model",
       "summary": "LangGraph's core: StateGraph, and the Pregel/bulk-synchronous super-step model — the same BSP computation as the cloud course, applied to agents.",
+      "intro": "This is the unit the course is named for. Units 1–3 built pipelines; agents need cycles, branching, and inspectable state — so LangGraph replaces the pipe with a graph. You will define StateGraphs — nodes as units of work, edges as control flow, a shared typed state — and then learn the execution model underneath: Pregel-style bulk-synchronous super-steps, in which the active nodes run, their writes merge at a barrier, and the next step begins. That model is why LangGraph agents are deterministic enough to test and debug: execution is a sequence of state transitions, not a soup of callbacks. Termination and the recursion limit close the unit — what stops a cyclic graph, and what happens when nothing does. Everything later is elaboration of this machine.",
       "prerequisites": [
         "lg2"
       ],
@@ -1497,6 +1503,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg5",
       "title": "State, Reducers & Control Flow",
       "summary": "Channels and reducers (how writes merge at the barrier), conditional edges and cycles (the agent loop as a real graph), and Command/Send for dynamic routing and map-reduce.",
+      "intro": "Unit 4 gave you the machine; this unit gives you its control surfaces. Channels and reducers govern state: when parallel nodes write the same key, the reducer defines how the writes merge at the super-step barrier — the difference between clobbering a message list and appending to it, and the reason concurrent branches are safe at all. Conditional edges and cycles govern flow: routing decisions made on state turn the agent loop into a real, inspectable graph rather than a hidden while-loop. Command and Send complete the toolkit — nodes that both update state and choose the next hop, and dynamic fan-out for map-reduce over inputs unknown at compile time. The gate asks you to design graphs using all three and to predict their execution step by step.",
       "prerequisites": [
         "lg4"
       ],
@@ -1869,6 +1876,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg6",
       "title": "Persistence, Memory & Human-in-the-Loop",
       "summary": "Checkpointers and threads (durable, resumable state), short- vs long-term memory under the context window, and interrupt/time-travel for human oversight.",
+      "intro": "A graph that only runs in memory is a demo. This unit makes agents durable: checkpointers persist the state at every super-step, so a thread can be resumed after a crash, continued tomorrow, or forked from any point in its history. On that substrate the unit builds memory — short-term state living in the thread versus long-term stores that survive it, both managed against the hard budget of the context window — and human-in-the-loop control: interrupts that pause a graph before a consequential action for approval or editing, and time travel that rewinds a thread to re-run it down a different path. These are the capabilities that separate production agents from toys, and the gate tests them as design problems, not API recall.",
       "prerequisites": [
         "lg4"
       ],
@@ -2255,6 +2263,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg7",
       "title": "Agent Architectures",
       "summary": "The canonical agent patterns as graphs: ReAct and the prebuilt agent, reflection/self-critique, and plan-and-execute — grounded in the foundational papers.",
+      "intro": "With the machinery complete, this unit assembles the canonical agents — each one a small graph you can read. ReAct returns from Unit 2, now as LangGraph's prebuilt agent: the reason→act→observe loop as a two-node cycle with tool execution, conditional routing, and checkpointed state. Reflection adds a critic: a second pass that reviews and revises the first, trading tokens for quality in a loop with an explicit exit condition. Plan-and-execute separates thinking from doing — a planner emits a task list a cheaper executor works through, with re-planning when steps fail. Grounded in the papers that introduced these patterns, the unit's real lesson is architectural judgment: which pattern fits which task, and what each one costs. The gate poses tasks and grades the graph you design.",
       "prerequisites": [
         "lg5"
       ],
@@ -2638,6 +2647,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg8",
       "title": "Multi-Agent Systems",
       "summary": "When and how to split work across agents: supervisor / swarm / hierarchical architectures, handoffs and subgraphs, and the coordination, cost, and reliability costs of going multi-agent.",
+      "intro": "One agent with many tools eventually collapses under its own context; this unit is about splitting the work. You will study the multi-agent architectures — supervisor, swarm, hierarchical — as graph topologies with different coordination costs, then the mechanics that implement them: handoffs (Command routing between agents) and subgraphs (whole agents nested as nodes, with state mapped at the boundary). The closing lesson is the honest accounting the hype omits: multi-agent systems multiply token cost, add coordination failure modes, and lose shared context at every boundary — so going multi-agent is an engineering trade-off, not an aesthetic upgrade. Unit 9's evaluation discipline is how you find out whether the split actually helped. The gate demands that accounting in your designs.",
       "prerequisites": [
         "lg7"
       ],
@@ -3013,6 +3023,7 @@ print(type(result))                      # <class 'Classification'>  — typed!`
       "id": "lg9",
       "title": "Evaluation, Observability & Production",
       "summary": "Make agents measurable and shippable: evaluation as the agent's test suite, tracing/streaming for observability, and the cost/latency/reliability discipline of treating an agent as a distributed system.",
+      "intro": "The closing unit turns an agent that works in your terminal into one you can ship and trust. Evaluation comes first — the agent's test suite: datasets of tasks, trajectory-level and outcome-level scoring, LLM-as-judge where labels are expensive, and regression runs on every change. Observability follows: tracing every super-step, streaming tokens and events to users, and debugging from recorded state rather than lucky reproduction. Production closes it: the cost, latency, and reliability budget of a system that is, by construction, a distributed system — plus the deployment realities of long-running, stateful graphs. The gate asks you to make an agent measurable, observable, and affordable — and to prove it with numbers rather than demos.",
       "prerequisites": [
         "lg7"
       ],

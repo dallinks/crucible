@@ -14,6 +14,8 @@ export const cloud = {
   difficulty: "Professional / Graduate",
   description:
     "The vendor-neutral principles of building scalable, reliable distributed systems on any cloud — scaling, availability, consistency, data, caching, async, microservices, resilience, security, and cost. Design judgment is graded against an architect's rubric, with a quantitative spine.",
+  overview:
+    "Any service that outgrows one machine enters a world with different physics: requests fan out across networks that lose messages, servers that fail independently, and data that lives in several places at once. Distributed-systems architecture is the discipline of building systems that stay fast, available, and correct in that world — and of knowing precisely which of those you are trading away at any moment, because under failure you cannot keep them all.\n\nThe course is vendor-neutral: the principles that hold on any cloud, anchored in Designing Data-Intensive Applications, Google's SRE books, and the foundational papers (CAP, Lamport clocks, Dynamo, Raft, Spanner). Four pillars organize it. **Scale by architecture**: statelessness, load balancing, and partitioning — growth handled by adding machines, not by buying bigger ones. **Failure as the normal case**: availability is composed and budgeted (SLIs, SLOs, error budgets), never assumed. **Consistency is a spectrum**: from linearizable to eventual, with the CAP theorem marking what a partition forces you to give up — replication schemes and quorums are where that trade is actually made. **Quantify the trade-offs**: capacity estimation, Little's Law, tail latency, cache hit-ratios, availability arithmetic, and cost — an architecture is defended with numbers or not at all.\n\nThe arc: units 1–2 establish the goals and their arithmetic — scalability, performance, availability, reliability. Units 3–4 are the hard core: consistency models, CAP, partitioning, and replication. Units 5–7 compose real systems from the parts: caching and content delivery, asynchronous and event-driven architecture, microservices and API design. Units 8–9 make it operable: resilience patterns and observability, then security, cost, and the Well-Architected trade-offs.\n\nBy the end you should be able to design a system to a stated scale and defend it quantitatively — estimate capacity, compose availability, choose a consistency model and replication scheme from the requirements, and name the failure modes before they find you. The gates grade that design judgment against a principal architect's rubric.",
   sources: [
     "Martin Kleppmann — Designing Data-Intensive Applications (O'Reilly; 1st ed. 2017, 2nd ed. w/ Chris Riccomini, 2026) — the backbone text",
     "Gilbert & Lynch — Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (ACM SIGACT News, 2002); Perspectives on the CAP Theorem (IEEE Computer 45(2), 2012)",
@@ -30,6 +32,7 @@ export const cloud = {
       id: "c1",
       title: "Scalability & Performance",
       summary: "Scale up vs out, statelessness and load balancing, capacity estimation, and the latency/percentile thinking that real systems need.",
+      intro: "The course opens with the discipline every scaling decision reduces to: arithmetic. This unit establishes the two ways to grow — up versus out — and why the industry settled on scale-out with stateless services behind load balancers, the design that lets capacity be added by adding machines rather than replacing them. You will do capacity estimation properly (QPS, storage, bandwidth, from daily actives down to peak load), then confront the measurements that dominate real systems: latency versus throughput, percentiles rather than averages, the tail at scale, and the ceilings that Amdahl's law and contention place on any scaling strategy. Every later unit assumes you can run these numbers on demand; the gate makes you derive capacity and defend a scaling choice quantitatively.",
       references: [
         "DDIA (Kleppmann, O'Reilly 2017) — ch. 1, Reliable, Scalable, and Maintainable Applications",
         "Dean & Barroso — The Tail at Scale (Communications of the ACM 56(2), 2013)",
@@ -433,6 +436,7 @@ export const cloud = {
       id: "c2",
       title: "Availability & Reliability",
       summary: "The nines, SLIs/SLOs/SLAs and the error budget, and how availability composes — series erodes it, redundancy restores it.",
+      intro: "Unit 1 made the system fast; this unit asks what happens when parts of it fail — because at scale they always do. You will make reliability measurable: SLIs, SLOs, SLAs, the nines and what each additional nine costs, and the error budget that turns reliability into a spendable engineering resource rather than a slogan. Then the unit's core theorem: how availability composes — components in series multiply their failure probabilities and erode the total, redundancy in parallel restores it — worked as arithmetic you can apply to any architecture diagram. Failure modes, redundancy patterns, and the recovery metrics RTO and RPO close it out. The gate asks you to compute the availability of a design and locate the component quietly destroying it.",
       prerequisites: ["c1"],
       masteryThreshold: 0.85,
       references: [
@@ -729,6 +733,7 @@ export const cloud = {
       id: "c3",
       title: "Consistency & the CAP Theorem",
       summary: "Consistency models from linearizable to eventual, the CAP impossibility under partitions, and logical time.",
+      intro: "Redundancy saved availability in Unit 2, but it created a new problem: the same data now lives in several places, and those places can disagree. This unit builds the vocabulary of that disagreement — consistency models from linearizable through causal to eventual, each a precise contract about what reads may observe — and then proves the constraint every design must respect: the CAP theorem, Gilbert and Lynch's impossibility result, showing that under a network partition a system chooses consistency or availability, not both. Logical time closes the unit: Lamport clocks and the happens-before relation, the machinery that lets distributed events be ordered at all. This is the most theoretical unit in the course, and every replication decision in Unit 4 stands on it.",
       prerequisites: ["c2"],
       masteryThreshold: 0.85,
       references: [
@@ -1119,6 +1124,7 @@ export const cloud = {
       id: "c4",
       title: "Partitioning & Replication",
       summary: "Sharding data and replicating it — leader/leaderless schemes, and the quorum-intersection rule that buys tunable consistency.",
+      intro: "With the consistency vocabulary fixed, this unit does the two things every large system must: split the data (partitioning) and copy it (replication). You will weigh hash against range sharding, meet consistent hashing — the technique that makes adding a node cheap instead of catastrophic — and confront the hot-key and resharding realities partition schemes live with. Replication brings Unit 3's CAP trade-off down to earth: leader-based versus leaderless designs, replication lag and what it does to readers, and then the quorum-intersection rule — W + R > N — that lets you tune consistency per operation and prove why the tuning works. Dynamo-style systems make it concrete. The gate asks for schemes chosen and defended, not vendor names recited.",
       prerequisites: ["c3"],
       masteryThreshold: 0.85,
       references: [
@@ -1487,6 +1493,7 @@ export const cloud = {
       id: "c5",
       title: "Caching & Content Delivery",
       summary: "Where and how to cache, the write/invalidation strategies, and the hit-ratio math that makes (or breaks) the read path.",
+      intro: "Units 3 and 4 made writes correct; this unit makes reads survivable. Caching is how systems absorb read load their databases could never take, and it is governed by one number — the hit ratio — whose arithmetic (effective latency, origin offload) you will run before choosing anything. The design space follows: where to cache (client, CDN, application tier, database), the write policies (through, back, around) and invalidation strategies, and the failure modes — stampedes, hot keys, stale reads — that turn a cache from an optimization into an outage. CDNs extend the idea to the planet's edge. Unit 3's consistency questions return in miniature: every cache is a replica you chose not to keep perfectly in sync. The gate makes you compute whether a cache pays.",
       prerequisites: ["c4"],
       masteryThreshold: 0.85,
       references: [
@@ -1810,6 +1817,7 @@ export const cloud = {
       id: "c6",
       title: "Asynchronous & Event-Driven Architecture",
       summary: "Decouple with queues and the log, get delivery semantics and idempotency right, and apply event sourcing, CQRS, and backpressure.",
+      intro: "So far every interaction has been a synchronous request waiting on a reply. This unit cuts that coupling: queues and logs let producers and consumers proceed at their own pace, absorb bursts, and fail independently — at the price of new semantics you must get exactly right. You will work the log abstraction, the delivery guarantees — at-most-once, at-least-once, and exactly-once, with the honest account of why the last is largely engineered around with idempotency rather than achieved — and the architectural patterns built on events: event sourcing, CQRS, and backpressure as the honest answer to a producer that outruns its consumers. Sagas, in Unit 7, will lean on everything here. The gate demands semantics, not slogans: which guarantee, enforced how, failing how.",
       prerequisites: ["c5"],
       masteryThreshold: 0.85,
       references: [
@@ -2140,6 +2148,7 @@ export const cloud = {
       id: "c7",
       title: "Microservices & API Design",
       summary: "When (and when not) to decompose, the fallacies every remote call must respect, and keeping data consistent across services with sagas.",
+      intro: "The system is now distributed in data and in time; this unit asks whether it should be distributed in ownership too. Microservices buy independent deployment and team autonomy at the price of turning function calls into network calls — so the unit opens with the honest monolith-versus-microservices decision, then confronts the fallacies of distributed computing that every remote call must respect (the network is not reliable, latency is not zero), and the API-design discipline that makes service boundaries survivable. The hardest part is data: transactions do not span services, so sagas — sequences of local transactions with compensating actions, built on Unit 6's messaging — take their place. The gate poses decomposition decisions and asks for the failure analysis, not the fashion.",
       prerequisites: ["c6"],
       masteryThreshold: 0.85,
       references: [
@@ -2480,6 +2489,7 @@ export const cloud = {
       id: "c8",
       title: "Resilience & Observability",
       summary: "Design for failure (timeouts, retries, circuit breakers, bulkheads), see the system (metrics/logs/traces), and know the limit FLP imposes.",
+      intro: "Everything built so far can still be taken down by one slow dependency. This unit is the discipline of failing well: timeouts on every call, retries with exponential backoff and jitter (and the retry storms naive retries create), circuit breakers that stop hammering a dying service, and bulkheads that keep one failure from consuming every thread. Seeing the system comes next — metrics, logs, and traces as the three signals, and what to alert on (symptoms and budgets) versus what merely to record. The unit closes with the FLP impossibility: in a fully asynchronous system, consensus cannot be guaranteed — the theoretical ceiling sitting under Unit 2's error budgets and Unit 4's quorums alike. The gate asks you to harden a design and to know what no design can promise.",
       prerequisites: ["c7"],
       masteryThreshold: 0.85,
       references: [
@@ -2849,6 +2859,7 @@ export const cloud = {
       id: "c9",
       title: "Security, Cost & the Well-Architected Trade-offs",
       summary: "Defense in depth and least privilege, the cost of the nines, and balancing the Well-Architected pillars — because there's no single best design.",
+      intro: "The closing unit adds the two constraints that outrank elegance in production: security and money. Defense in depth and least privilege organize the security lesson — identity as the new perimeter, network segmentation, encryption in transit and at rest, and the blast-radius thinking that assumes each layer will fail. The cost lesson prices what the course has been building: the marginal cost of each nine (Unit 2's arithmetic, now in dollars), and the levers — right-sizing, spot capacity, storage tiers, egress — that separate an efficient architecture from an expensive one. The Well-Architected pillars then frame the course's real thesis: reliability, performance, security, cost, and operations pull against each other, and architecture is choosing those trade-offs on purpose. The gate grades exactly that judgment.",
       prerequisites: ["c8"],
       masteryThreshold: 0.85,
       references: [
