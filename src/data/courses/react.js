@@ -38,6 +38,8 @@ export const react = {
   difficulty: "Professional",
   description:
     "React as a runtime for UI = f(state): pure components, immutable element trees, reconciliation, hooks as positional state, effects as synchronization, and concurrent rendering — derived from the model and proved where provable, not memorized as API folklore. Gates demand transfer: predict render behavior, diagnose stale closures, justify memoization soundness, and design state machines under a strict reviewer rubric.",
+  overview:
+    "React is the dominant way user interfaces get built, and it is routinely taught as an API catalogue: components, props, useState, useEffect, and a list of rules to memorize. Taught that way, its behavior seems arbitrary — renders fire 'too often', closures go stale, effects loop — and debugging becomes guesswork. This course teaches React as what it actually is: a **runtime for the equation UI = f(state)**, from which every rule follows as a consequence.\n\nThree pillars organize everything. **Purity**: components are pure functions from props and state to immutable descriptions of UI (element trees) — rendering computes a description and never mutates the world. **Reconciliation**: React compares the new description against the old under an O(n) heuristic and commits a minimal set of real mutations, which is why keys and component identity govern what survives a render. **Scheduling**: state updates are queued and batched, rendering can be paused and resumed (Fiber), and effects synchronize the pure world with everything outside it.\n\nThe arc: units 1–3 build the core model — the render/commit cycle, reconciliation and identity, and state-as-snapshot semantics. Units 4–6 put behavior on a sound footing: designing state so illegal states are unrepresentable, hooks as positional storage (and the theorem that makes the Rules of Hooks necessary rather than stylistic), and effects as synchronization with their dependency and cleanup discipline. Units 7–10 scale the model to production: the re-render cost model and memoization soundness, concurrent rendering and tearing, data fetching with Suspense and the server, and types, tests, and error boundaries.\n\nProvable claims are proved — the tree-diff complexity gap, update-queue fold semantics, the stale-closure theorem, the fetch-race interleavings — rather than asserted as folklore. By the end you should be able to predict render behavior before running the code, diagnose stale closures and identity bugs from the model, justify every memoization you add, and design component state like the state machine it is. The gates grade exactly that transfer.",
   sources: [
     "react.dev — official React documentation: Learn React + API Reference (Meta, 2023–2025)",
     "Dan Abramov — 'A Complete Guide to useEffect' (overreacted.io, 2019)",
@@ -57,6 +59,7 @@ export const react = {
       "id": "u1",
       "title": "The Rendering Model",
       "summary": "Elements as immutable descriptions, components as pure functions, and the trigger → render → commit pipeline that turns UI = f(state) into DOM mutations.",
+      "intro": "The course opens with the model everything else derives from. A React app is one equation — the UI is a function of state — and this unit makes each term precise. Elements are immutable descriptions of what the screen should be, not the screen itself; components are functions that produce those descriptions; and the runtime's trigger → render → commit pipeline is what turns a state change into the minimal DOM mutations that realize the new description. Purity is the load-bearing contract: because rendering only computes and never mutates, React is free to render twice, discard work, or pause it — every later feature (batching, concurrency, memoization) is licensed by this contract. The gate asks you to predict pipeline behavior from the model, which is this course's standing demand.",
       "references": [
         "react.dev — Describing the UI; Render and Commit; Keeping Components Pure",
         "Dan Abramov — 'React as a UI Runtime' (overreacted.io, 2019)",
@@ -539,6 +542,7 @@ export const react = {
       "id": "u2",
       "title": "Reconciliation and Identity",
       "summary": "How React turns two descriptions into a minimal edit script: the tree-diff complexity gap, the two heuristic assumptions, keys, and why state's identity is an address in the tree.",
+      "intro": "Unit 1 ended with two descriptions — the previous render's output and the next — and this unit is how React turns them into a minimal edit script. The honest theory comes first: general tree edit distance is Θ(n³) and unusable per keystroke, so React's O(n) diff rests on two heuristic assumptions — different element types imply different subtrees, and keys identify siblings across renders — and you will study exactly what those assumptions buy and when they lie. Keys stop being folklore and become what they are: identity declarations that control whether state is preserved or destroyed. Which exposes the unit's deepest point: state lives at a position in the tree, not inside your component function. The gate poses reconciliation puzzles and asks you to predict what survives.",
       "references": [
         "react.dev — Preserving and Resetting State; Rendering Lists (key semantics); legacy reconciliation docs",
         "Zhang & Shasha (1989) — Simple fast algorithms for the editing distance between trees",
@@ -970,6 +974,7 @@ export const react = {
       "id": "u3",
       "title": "State as a Snapshot",
       "summary": "Why a render's state is a constant, how the update queue folds batched updates into the next snapshot, and why immutability is what makes change detectable at all.",
+      "intro": "Reconciliation compares snapshots; this unit is about the snapshots themselves. A render's state is a constant — every closure created during that render sees the same frozen values, which is why calling setCount three times moves the count once, and why 'my state is stale' is usually a correct program being read with the wrong model. The update queue explains what setState actually does: enqueue a replacement or an updater function, folded left to right into the next snapshot when the batch flushes. Immutability completes the model: React detects change by reference comparison, so mutation is invisible to it by construction — and structural sharing is how you produce new snapshots affordably. Three lessons, one theme: state transitions are values, not effects. The gate makes you trace them exactly.",
       "references": [
         "react.dev — State as a Snapshot; Queueing a Series of State Updates; Updating Objects/Arrays in State",
         "react.dev — Automatic batching in React 18 (Working Group discussion #21)",
@@ -1389,6 +1394,7 @@ export const react = {
       "id": "u4",
       "title": "Designing State",
       "summary": "State as a data-modeling problem: make illegal states unrepresentable, keep one source of truth, choose owners by lifetime, and use reducers and context as the structuring tools.",
+      "intro": "The mechanics of state are fixed; this unit turns to its design — the difference between components that get debugged and components that cannot break. The first discipline: make illegal states unrepresentable (a status of 'loading' or 'success' or 'error', not three booleans with eight combinations), with reducers as the enforcement mechanism — state machines whose transitions are the only way state moves. The second: one source of truth — derive, don't duplicate, because every cached copy of derivable data is a future inconsistency. The third: choose state's owner by its lifetime, lifting it only as far as sharing requires, and use context for scoped injection — dependency provision, not a store. The gate poses modeling problems and grades the state shape you choose.",
       "references": [
         "react.dev — Choosing the State Structure; Sharing State Between Components; Extracting State Logic into a Reducer; Passing Data Deeply with Context; Scaling Up with Reducer and Context",
         "Yaron Minsky — 'Effective ML' / 'Make illegal states unrepresentable' (the design principle, originally for OCaml)",
@@ -1815,6 +1821,7 @@ export const react = {
       "id": "u5",
       "title": "Hooks: Contract and Machinery",
       "summary": "Why hooks are positional state cells, the theorem that makes the Rules of Hooks necessary rather than stylistic, a working useState built from scratch, and custom hooks as logic-sharing without state-sharing.",
+      "intro": "Four units in, the course finally asks what a hook is — and proves the answer rather than reciting the rules. Hooks are positional storage: a component's hooks live in a list indexed by call order, so the Rules of Hooks are not style guidance but a theorem — call order must be identical on every render, or every hook after a skipped call silently reads another hook's state. You will prove that, then build a working useState from scratch — an implementation whose correctness depends on exactly the invariant the rules protect — and see custom hooks for what they are: functions that share logic while every call site gets its own state cells. Folklore becomes machinery here, and the gate asks you to reason from the machinery.",
       "references": [
         "React RFC #68 — Hooks (2018), including the motivation and 'why not keys' discussion",
         "react.dev — Rules of Hooks; Reusing Logic with Custom Hooks",
@@ -2239,6 +2246,7 @@ export const react = {
       "id": "u6",
       "title": "Effects and Synchronization",
       "summary": "Effects as synchronization with external systems — the setup/cleanup lifecycle, the stale-closure theorem behind dependency arrays, the you-might-not-need-an-effect catalog, and refs as the sanctioned mutable escape hatch.",
+      "intro": "Rendering is pure; the world is not. This unit is the doorway between them. Effects are not 'things that happen after render' — they are synchronization: each effect reconciles an external system (a subscription, timer, network request, DOM API) with the current render's values, and the setup/cleanup pair is the contract that keeps that reconciliation correct across re-renders — not a lifecycle to memorize. The dependency array follows from Unit 3's snapshots: an effect closes over one render's values, and the stale-closure theorem makes the linter's demands provably necessary rather than bureaucratic. The catalog of effects you should not write — derived state, event logic — and refs as the sanctioned mutable escape hatch complete the unit. The gate makes you diagnose real effect bugs from the model.",
       "references": [
         "react.dev — Synchronizing with Effects; Lifecycle of Reactive Effects; Removing Effect Dependencies; You Might Not Need an Effect; Referencing Values with Refs; Manipulating the DOM with Refs",
         "Dan Abramov — 'A Complete Guide to useEffect' (overreacted.io, 2019)",
@@ -2759,6 +2767,7 @@ export const react = {
       "id": "u7",
       "title": "Rendering Performance",
       "summary": "The re-render cost model and how to measure it, memoization as a soundness-conditional optimization built on referential equality, and the composition patterns that make memo unnecessary.",
+      "intro": "Nothing so far has asked what rendering costs; this unit builds the cost model and the judgment to act on it. First, what a re-render actually is — re-running f and diffing, which is usually cheap — and how to measure before optimizing, because most 'performance fixes' address renders that never mattered. Memoization is then treated with a rigor the topic rarely gets: memo, useMemo, and useCallback form a soundness-conditional optimization — correct only while referential equality tracks semantic equality, and silently broken by a single unstable dependency. Finally, the alternative that usually wins: composition — lifting content into children, splitting components — which avoids re-renders structurally, with no invariant to maintain. The gate asks you to justify every memo you keep, or remove it.",
       "references": [
         "react.dev — React.memo, useMemo, useCallback API references; React Developer Tools Profiler docs",
         "react.dev — React Compiler (automatic memoization) documentation",
@@ -3169,6 +3178,7 @@ export const react = {
       "id": "u8",
       "title": "Concurrent React",
       "summary": "Fiber as the data structure that makes rendering pausable, transitions as the scheduling vocabulary for urgent vs deferrable updates, and the tearing problem that external stores create — with useSyncExternalStore as its contract-level solution.",
+      "intro": "The model so far renders synchronously to completion; this unit is what React had to become to stop blocking. Fiber is the data structure that makes rendering pausable — the component tree as a linked structure the runtime can walk, suspend, and resume, turning render into interruptible work. On top of it, transitions supply the scheduling vocabulary: urgent updates (typing) versus deferrable ones (filtering ten thousand rows), with startTransition marking work React may interrupt. Interruptibility has a price: state read outside React's snapshots can tear — two parts of one frame showing different values — and useSyncExternalStore is the contract that restores consistency for external stores. The gate asks you to reason about scheduling and tearing from the Fiber model, not from folklore.",
       "references": [
         "Andrew Clark — 'React Fiber Architecture' (github.com/acdlite/react-fiber-architecture, 2016)",
         "react.dev — useTransition, startTransition, useDeferredValue, useSyncExternalStore API references",
@@ -3583,6 +3593,7 @@ export const react = {
       "id": "u9",
       "title": "Data, Suspense, and the Server",
       "summary": "Network data as a synchronization problem: the fetch-race proof and its protocol, Suspense as the declarative loading contract, the hydration matching invariant, and Server Components as the two-graph architecture.",
+      "intro": "Data now enters the picture, and the model absorbs it as another synchronization problem. First, the proof that ad-hoc fetching races: responses can resolve out of order, and the ignore-flag/AbortController protocol is the provably correct discharge of an effect's obligations, not a style preference. Suspense then makes loading declarative — a component that is not ready suspends, and the nearest boundary shows the fallback — moving loading states out of every component's booleans and into the tree's structure. SSR adds the hydration invariant: server and client must render identical first output, which is exactly why Date.now() in render breaks. Server Components complete the arc: two component graphs, one running at the data source and shipping zero bundle bytes. The gate demands the protocols.",
       "references": [
         "react.dev — Suspense, use, lazy API references; 'Synchronizing with Effects' (fetching + race cleanup)",
         "react.dev — hydrateRoot, renderToPipeableStream; 'New Suspense SSR Architecture in React 18' (reactwg #37)",
@@ -4123,6 +4134,7 @@ export const react = {
       "id": "u10",
       "title": "Robust React: Types, Tests, Errors",
       "summary": "Making React apps trustworthy: types that encode the component contract and make illegal states unrepresentable, tests that assert behavior over implementation, and error boundaries as the render-phase failure contract.",
+      "intro": "The closing unit makes everything before it hold under production pressure. Types first: TypeScript as the component contract — prop unions that make illegal combinations unrepresentable (Unit 4's discipline, enforced at compile time), generics for reusable components, and the typing of children, refs, and events that trips real codebases. Testing second: assert behavior, not implementation — Testing Library's queries as a user's view of the tree, and why tests that mirror internals break on every refactor while proving nothing. Error boundaries last: the render-phase failure contract — what they catch, what they cannot (events, async code, effects), and the recovery UX that separates an error from an outage. The gate is scenario-graded engineering judgment, the course's closing register.",
       "references": [
         "react.dev — TypeScript usage; Testing overview; <Component> error boundaries; useState/useReducer typing",
         "Testing Library documentation — guiding principles ('test as the user does'); react.dev on act()",

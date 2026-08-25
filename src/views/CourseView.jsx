@@ -1,5 +1,6 @@
 import { theme } from "../theme.js";
 import { Page, Header, Button, Bar, Badge, Eyebrow } from "../components/ui.jsx";
+import { rich } from "../components/Blocks.jsx";
 import { getCourse } from "../data/index.js";
 import { useProgress } from "../state/useProgress.js";
 import { unitStates, courseProgress } from "../lib/gating.js";
@@ -36,6 +37,15 @@ export function CourseView({ courseId, onGo }) {
           </div>
         </div>
 
+        {course.overview && (
+          <div className="rise" style={{ borderTop: `1px solid ${theme.border}`, paddingTop: 30, marginBottom: 48 }}>
+            <Eyebrow style={{ marginBottom: 14 }}>Orientation</Eyebrow>
+            <div style={{ fontSize: 16.5, lineHeight: 1.75, color: theme.text, whiteSpace: "pre-line" }}>
+              {rich(course.overview)}
+            </div>
+          </div>
+        )}
+
         <div style={{ display: "grid", gap: 18 }}>
           {course.units.map((unit, i) => {
             const st = states[unit.id];
@@ -67,6 +77,22 @@ export function CourseView({ courseId, onGo }) {
                   {unit.title}
                 </h3>
                 <p style={{ fontSize: 15.5, color: theme.textFaint, margin: "0 0 20px", lineHeight: 1.6 }}>{unit.summary}</p>
+
+                {!locked && unit.intro && (
+                  <div
+                    style={{
+                      fontSize: 15,
+                      color: theme.text,
+                      lineHeight: 1.7,
+                      margin: "0 0 20px",
+                      whiteSpace: "pre-line",
+                      borderLeft: `2px solid ${theme.accent.sage}55`,
+                      paddingLeft: 14,
+                    }}
+                  >
+                    {rich(unit.intro)}
+                  </div>
+                )}
 
                 {unit.references?.length > 0 && (
                   <div style={{ marginBottom: 20 }}>

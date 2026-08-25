@@ -21,7 +21,10 @@ export const QUESTION_TYPES = ["mcq", "multi", "numeric", "short", "proof", "ope
 // the examples). Exercise items count as EXERCISE_WORD_EQUIV words each, since
 // attempting a problem takes far longer than reading it.
 export const DEPTH = {
+  MIN_OVERVIEW_WORDS: 250, // course-level orientation ("lecture 0") — see AUTHORING.md
+  MIN_UNIT_INTRO_WORDS: 100, // unit-level chapter opener — see AUTHORING.md cohesion rules
   MIN_LESSON_WORDS: 1200, // absolute floor for any lesson's content
+  MAX_LESSON_WORDS_SOFT: 3000, // above this ⇒ warning: chapter-scale, split or tighten (target band 1,600–2,600)
   STUDY_WPM: 90, // claimed estMinutes must be backed by estMinutes × this in study-words
   EXERCISE_WORD_EQUIV: 250, // study-word credit per exercise item
   MAX_IMPLIED_WPM: 300, // words/estMinutes above this ⇒ the estimate undersells the lesson
@@ -130,6 +133,8 @@ function validateLessonDepth(lesson, path, errors, warnings) {
   }
   if (words < DEPTH.MIN_LESSON_WORDS)
     err(errors, path, `${words} words of content — a textbook section needs >=${DEPTH.MIN_LESSON_WORDS}`);
+  if (words > DEPTH.MAX_LESSON_WORDS_SOFT)
+    warnings.push(`${path}: ${words} words — chapter-scale; split the lesson or tighten it (target band 1,600–2,600, soft ceiling ${DEPTH.MAX_LESSON_WORDS_SOFT})`);
   if (blocks.length < DEPTH.MIN_BLOCKS)
     err(errors, path, `${blocks.length} content block(s) — needs >=${DEPTH.MIN_BLOCKS} (motivation, definitions, theorems, worked examples, exercises)`);
   if (theorems < DEPTH.MIN_THEOREM_BLOCKS)
@@ -179,20 +184,48 @@ export function validateCourse(course) {
   if (!course || typeof course !== "object") return { ok: false, errors: ["course is not an object"], warnings };
   if (!course.id) err(errors, "course", "missing id");
   if (!course.title) err(errors, "course", "missing title");
+  // The orientation ("lecture 0"): learner-facing framing the lesson depth
+  // floors structurally exclude, so it lives at the course level and gets its
+  // own floor. It must say what the field is, why it matters, what the
+  // course's pillars are, and how the units build (see AUTHORING.md).
+  const overviewWords = countWords(course.overview);
+  if (!course.overview)
+    err(errors, "course", "missing overview — every course opens with an orientation: what the field is, why it matters, its pillars, and how the units build (AUTHORING.md)");
+  else if (overviewWords < DEPTH.MIN_OVERVIEW_WORDS)
+    err(errors, "course", `overview has ${overviewWords} words (<${DEPTH.MIN_OVERVIEW_WORDS}) — an orientation must actually orient: field, motivation, pillars, and the arc of the units`);
   if (!Array.isArray(course.units) || !course.units.length) err(errors, "course", "needs at least one unit");
   if (!Array.isArray(course.sources) || !course.sources.length)
     warnings.push("course: no sources[] — no provenance trail for the material");
+
+  // All lesson ids up front, so `builds_on` can reference lessons in any unit.
+  const lessonIds = new Set();
+  (course.units || []).forEach((u) => (u.lessons || []).forEach((l) => l.id && lessonIds.add(l.id)));
 
   (course.units || []).forEach((unit, ui) => {
     const up = `units[${ui}]`;
     seeId(unit.id, up);
     if (!unit.title) err(errors, up, "missing title");
+    // The chapter opener: where the course stands, the problem this unit takes
+    // up, what the gate will demand (see AUTHORING.md cohesion rules).
+    const introWords = countWords(unit.intro);
+    if (!unit.intro)
+      err(errors, up, "missing intro — every unit opens with a chapter opener: what came before, the problem this unit takes up, and what the gate demands (AUTHORING.md)");
+    else if (introWords < DEPTH.MIN_UNIT_INTRO_WORDS)
+      err(errors, up, `intro has ${introWords} words (<${DEPTH.MIN_UNIT_INTRO_WORDS}) — a chapter opener must locate the unit in the arc, not caption it`);
     if (!Array.isArray(unit.lessons) || !unit.lessons.length) err(errors, up, "needs at least one lesson");
 
     (unit.lessons || []).forEach((lesson, li) => {
       const lp = `${up}.lessons[${li}]`;
       seeId(lesson.id, lp);
       if (!lesson.title) err(errors, lp, "missing title");
+      if (lesson.builds_on != null) {
+        if (!Array.isArray(lesson.builds_on)) err(errors, lp, "builds_on must be an array of lesson ids");
+        else
+          lesson.builds_on.forEach((dep) => {
+            if (dep === lesson.id) err(errors, lp, "builds_on references the lesson itself");
+            else if (!lessonIds.has(dep)) err(errors, lp, `builds_on references unknown lesson "${dep}"`);
+          });
+      }
       if (!Array.isArray(lesson.content) || !lesson.content.length) err(errors, lp, "empty content");
       (lesson.content || []).forEach((b, bi) => {
         if (!BLOCK_TYPES.includes(b.type)) err(errors, `${lp}.content[${bi}]`, `bad block type "${b.type}"`);

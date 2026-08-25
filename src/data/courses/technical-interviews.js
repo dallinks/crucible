@@ -26,6 +26,8 @@ export const technicalInterviews = {
   difficulty: "Professional · level-agnostic",
   description:
     "The technical hiring pipeline as an engineering problem: the interview as a noisy measurement channel you learn to optimize. Algorithmic problem-solving, system design, behavioral signal, and the negotiation/offer meta-game — each with a quantitative spine, and gates graded by a demanding hiring-manager rubric rather than multiple choice.",
+  overview:
+    "Technical interviews are a strange, learnable game: a few hours of high-stakes performance that gate access to roles, compensation, and trajectory — and most engineers prepare for them by grinding random problems and hoping. This course treats the pipeline as an engineering problem instead. Its organizing idea: an interview is a **noisy measurement channel**. The interviewer estimates your true competence from a short, high-variance sample taken under stress; your job is to maximize the signal of competence you emit per minute, and to make decisions about the process — where to apply, what to prepare, what to accept — with the math that uncertainty demands.\n\nFour pillars follow from that framing. **The meta-game**: signal detection and funnel probability — what interviews actually measure, and how applications compound into expected offers. **Algorithms on demand**: a deterministic solve pipeline, live complexity derivation, and pattern taxonomies organized as trigger → invariant → complexity — not memorized solutions. **System design**: pinning requirements, turning scale into arithmetic, and a repeatable design procedure with an explicit trade-off catalog. **The human game**: behavioral rounds as structured evidence against a competency rubric, and negotiation as decision and game theory rather than discomfort.\n\nThe arc: units 1–2 establish the measurement frame and the funnel numbers. Units 3–7 are the coding spine — the solve pipeline, both pattern taxonomies, dynamic programming as a discipline, and coding and communicating under observation. Units 8–10 are the design spine — estimation, the design procedure, and canonical designs worked end-to-end. Units 11–13 close the loop: behavioral narrative, negotiation, and preparation as an optimization problem through interview day.\n\nAs a capstone, the course deliberately reuses the platform's other courses — complexity and DP from algorithms, CAP, quorums, and tail latency from cloud architecture, equity mechanics from entrepreneurship. By the end you should be able to walk into any round with a procedure rather than a hope: derive complexity live, drive a design from requirements to numbers, tell structured stories that carry signal, and negotiate an offer by expected value. The gates grade you the way a demanding hiring manager would.",
   sources: [
     "Gayle Laakmann McDowell — Cracking the Coding Interview, 6e (CareerCup, 2015)",
     "Aziz, Lee & Prakash — Elements of Programming Interviews (EPI), 2e",
@@ -43,6 +45,7 @@ export const technicalInterviews = {
       "id": "u1",
       "title": "Signal, Noise & the Hiring Decision",
       "summary": "The interview as a noisy measurement of true competence — why it is high-variance and asymmetric, and how to reverse-engineer what it scores.",
+      "intro": "The course opens with its organizing move: treating the interview as a measurement instrument, so that its strangeness becomes analyzable. You will model the interview as a noisy channel — a short, high-variance sample of your competence, read under stress — and see what that framing implies: why strong engineers fail routinely, why the process is asymmetric (a false hire costs the company more than a false reject), and therefore why the bar sits where it does. Decision theory explains the hiring committee; the final lesson reverse-engineers the rubric — what each round actually scores, which is often not what candidates optimize for. Everything later in the course — preparation strategy, in-round tactics, negotiation — derives from this frame, and the gate checks that you can reason with it, not recite it.",
       "references": [
         "Green & Swets — Signal Detection Theory and Psychophysics (1966) — the hit/miss/false-alarm framing",
         "Classical test theory — reliability = true-score variance / observed-score variance; Spearman–Brown",
@@ -493,6 +496,7 @@ export const technicalInterviews = {
       "id": "u2",
       "title": "The Funnel & the Numbers",
       "summary": "The job search as a pipeline of conditional probabilities: expected offers, how many applications a target requires, and why correlated failures change the math.",
+      "intro": "With the measurement frame set, this unit does the arithmetic most candidates never do on the process itself. The job search is a pipeline of conditional probabilities — response rate times screen pass times onsite pass times offer — and multiplying them yields the expected offers per hundred applications, a number that is usually sobering and always clarifying. You will compute how many applications a target number of offers actually requires, then study variance and correlation: why failures cluster (one weak signal repeats across rounds), why batching applications matters for both information and leverage, and how to sequence practice companies before priority ones. The unit turns anxiety into a capacity plan; the gate makes you run the numbers on realistic scenarios.",
       "references": [
         "Standard hiring-funnel analytics — stage conversion rates (apply → screen → onsite → offer)",
         "Geometric & binomial distributions — expected trials to first success, sum over n independent trials",
@@ -933,6 +937,7 @@ export const technicalInterviews = {
       "id": "u3",
       "title": "The Solve Pipeline & Complexity On-Demand",
       "summary": "A deterministic procedure for attacking any coding problem, deriving its complexity live, and recognizing when a solution is provably optimal.",
+      "intro": "The coding spine begins not with patterns but with a procedure. This unit installs the solve pipeline — restate, explore examples, brute force first, identify the bottleneck, optimize, verify — a deterministic sequence that replaces staring at a blank editor and doubles as the communication structure interviewers score. Complexity on demand is the second skill: deriving time and space live, from loops and recurrences, and stating them before the interviewer has to ask. The third is knowing when to stop: recognizing optimality by lower bound — any solution must at least read all n inputs — so you defend O(n) instead of hunting an impossible improvement. These three run underneath every problem in Units 4–6, and the gate drills them on problems you have not seen.",
       "references": [
         "CLRS 4e — asymptotic notation, the Master theorem, decision-tree lower bound for comparison sorting (cross-links the `algorithms` course, Arc 1 & Arc 3)",
         "McDowell — Cracking the Coding Interview: the 7-step approach & BUD optimization",
@@ -1367,6 +1372,7 @@ export const technicalInterviews = {
       "id": "u4",
       "title": "Pattern Taxonomy I — Sequences & Search",
       "summary": "The array/string/search patterns as trigger → invariant → complexity, including the correctness theorem behind binary-search-on-the-answer.",
+      "intro": "The pipeline needs a pattern library to draw on; this unit builds the sequence-and-search half. Each pattern is taught as trigger → invariant → complexity: what in a problem statement summons it, the invariant that makes it correct, and the cost you can state on sight. Two pointers and sliding windows handle contiguous structure; binary search generalizes past sorted arrays into binary-search-on-the-answer, with the monotonic-predicate correctness theorem that pattern rests on; monotonic stacks and prefix/difference arrays cover next-greater-element and range problems. The point is transfer: recognizing an unseen problem as an instance of a pattern, then proving the invariant holds in its terms. The gate poses exactly that recognition, under time.",
       "references": [
         "EPI & CTCI — arrays, strings, searching pattern chapters",
         "CLRS 4e — binary search invariants; amortized analysis (cross-links `algorithms` Arc 3, monotonic stack O(n))",
@@ -1740,6 +1746,7 @@ export const technicalInterviews = {
       "id": "u5",
       "title": "Pattern Taxonomy II — Graphs, Trees & Recursion",
       "summary": "Traversal, backtracking with pruning, and the structural patterns (union-find, topological sort, heaps) — each as trigger, invariant, and complexity.",
+      "intro": "The second half of the pattern library covers structure: graphs, trees, and recursion. BFS and DFS return from the algorithms canon in interview form — distances, components, cycle detection — along with the grid problems that are graphs in disguise. Backtracking gets the honest treatment: it is exponential by nature, so the skill is the pruning that makes it feasible and the recursion-tree reading that gives its cost. The structural patterns close the unit — union-find for connectivity, topological sort for dependency order, heaps for rolling extremes — each with its trigger and invariant, exactly as in Unit 4. Together the two taxonomies cover the overwhelming majority of what interviews ask; the gate mixes them so that recognition, not recall, is what passes.",
       "references": [
         "CLRS 4e — BFS/DFS, topological sort, disjoint-set forests with union-by-rank + path compression (α(n)); cross-links `algorithms` Arc 2 & Arc 3",
         "EPI & CTCI — graphs, trees, recursion, and backtracking chapters"
@@ -2160,6 +2167,7 @@ export const technicalInterviews = {
       "id": "u6",
       "title": "Dynamic Programming as a Discipline",
       "summary": "Recognizing DP, defining the subproblem precisely, the five canonical formulations, and reconstructing the actual solution — not just its value.",
+      "intro": "Dynamic programming gets its own unit because it is the most feared interview topic and the most formulaic once disciplined. The discipline: recognize the DP signature (optimization or counting over sequential choices with overlapping subproblems), then define the subproblem in one precise sentence — the step where interviews are actually won or lost. The five canonical formulations — prefix, interval, subset, two-sequence, grid — cover nearly every interview DP; from a formulation, the transition, base cases, and complexity follow mechanically, and reconstruction recovers the actual solution rather than just its value. Unit 3's pipeline carries the whole performance. This unit compresses the technique into interview-speed judgment, and the gate poses unseen problems and grades the subproblem definition first.",
       "references": [
         "CLRS 4e — dynamic programming: optimal substructure, overlapping subproblems, LCS, matrix-chain, 0/1 knapsack; cross-links `algorithms` Arc 2 (DP)",
         "Patience sorting / Schensted — longest increasing subsequence in O(n log n)",
@@ -2503,6 +2511,7 @@ export const technicalInterviews = {
       "id": "u7",
       "title": "Coding, Testing & Communicating Under Observation",
       "summary": "Turning a verified idea into clean, correct code; deriving tests systematically; and communicating — including treating a hint as evidence to update on.",
+      "intro": "An idea that is right but communicated badly measures the same as no idea — this unit is the delivery layer for everything in Units 3–6. Writing code under observation: idiomatic structure, meaningful names, and the narration that lets the interviewer follow your intent and credit it while you type. Systematic test derivation: boundaries, equivalence classes, adversarial inputs — recited from the structure of the problem, not improvised. And the meta-skill candidates rarely train: hints are evidence — an interviewer's nudge tells you where the rubric says you are, and updating on it quickly is scored as collaboration, one of the highest-weight signals in the round. The gate simulates the full performance: the code, the tests, and the recovery.",
       "references": [
         "CLRS 4e — loop invariants (initialization / maintenance / termination) for correctness",
         "Boundary-value analysis & equivalence partitioning — standard software-testing method",
@@ -2840,6 +2849,7 @@ export const technicalInterviews = {
       "id": "u8",
       "title": "Estimation & Requirements",
       "summary": "Driving a system-design round: pin the requirements, then turn scale into arithmetic — QPS, storage, bandwidth, concurrency (Little's Law), and the latency numbers.",
+      "intro": "The design spine opens where real design rounds are won: before any boxes are drawn. Requirements come first — functional scope, scale parameters, and the SLO targets that decide everything downstream; pinning them is the difference between designing a system and designing the asked-for system. Then estimation: users to QPS with peak factors, storage from write rates and object sizes, bandwidth, and concurrency via Little's Law — capacity arithmetic performed aloud, in a whiteboard register. The latency numbers close the unit: the order-of-magnitude constants (memory versus SSD versus network versus cross-region) that let you read your own estimates and spot the bottleneck the design must address. The gate makes you produce the numbers quickly and defend them.",
       "references": [
         "Kleppmann — Designing Data-Intensive Applications: describing load, back-of-envelope reasoning (cross-links the `cloud` course, Scalability unit)",
         "Alex Xu — System Design Interview vol. 1: the framework & back-of-envelope estimation",
@@ -3234,6 +3244,7 @@ export const technicalInterviews = {
       "id": "u9",
       "title": "The Design Procedure & Tradeoff Catalog",
       "summary": "A repeatable procedure for the design round, plus the storage and delivery trade-offs — each as a triggering condition, grounded in the cloud course's theorems.",
+      "intro": "Numbers in hand, this unit installs the design procedure: API and data model, the read and write paths, then scaling by bottleneck — a repeatable sequence that keeps a 45-minute round coherent under pressure. Its second half is the trade-off catalog, each entry stated as a triggering condition: SQL versus NoSQL, cache placement and invalidation, sharding and replication choices, synchronous versus asynchronous processing — every entry grounded in the distributed-systems theorems (CAP, quorum intersection, availability composition) so your choices carry proofs rather than fashions. Interviewers probe the why behind each arrow on the board, and rehearsed trade-off language is precisely what survives that probing. The gate poses design fragments and grades the justifications.",
       "references": [
         "Kleppmann — DDIA: replication, partitioning, transactions, consistency (cross-links the `cloud` course: CAP, quorums, consistent hashing, caching)",
         "Alex Xu — System Design Interview vol. 1–2: the step framework and component patterns"
@@ -3630,6 +3641,7 @@ export const technicalInterviews = {
       "id": "u10",
       "title": "Canonical Designs, Worked End-to-End",
       "summary": "Two full designs (a rate limiter and a typeahead system) built with the procedure, then the skill of evaluating your own design — availability composition, SPOFs, and scaling.",
+      "intro": "This unit runs the whole method end to end, twice. First a rate limiter: requirements, estimation, the algorithm choice (token bucket versus sliding window), the distributed-state problem, and the failure modes an interviewer will poke. Then a typeahead system: heavy-read fan-out, the trie-versus-precomputed-top-k trade-off, cache layering, and freshness. Both are canonical rounds, and both are worked with Unit 8's numbers and Unit 9's procedure so you see the method producing the design rather than decorating it afterward. The third lesson is the differentiating skill: evaluating your own design unprompted — composing its availability, finding its single points of failure and hot spots, and naming what breaks at 10× — the behavior that reads as senior. The gate scores full designs.",
       "references": [
         "Alex Xu — System Design Interview: rate limiter, autocomplete/typeahead, chapters worked end to end",
         "Kleppmann — DDIA; Google SRE — availability composition, error budgets (cross-links the `cloud` course, Availability unit)"
@@ -4085,6 +4097,7 @@ export const technicalInterviews = {
       "id": "u11",
       "title": "The Competency Rubric & Narrative Construction",
       "summary": "Behavioral rounds as structured signal: the competency rubric, the STAR schema, a story bank that covers every competency, and the failure modes that sink strong engineers.",
+      "intro": "The behavioral round is not small talk; it is a structured scoring exercise against a competency rubric — ownership, conflict handling, influence, dealing with failure — and this unit treats it with the same rigor as the coding rounds. You will see what each competency's positive and negative signals look like to a trained interviewer, then build the story bank: six to ten real experiences, written in the STAR schema, quantified, and mapped so that every competency has coverage — the preparation that converts an improvised round into a prepared one. The final lesson covers the failure modes that sink strong engineers — the 'we' that hides your contribution, blaming, rambling — and the hard questions about conflict and failure that are asked precisely because they are uncomfortable.",
       "references": [
         "Amazon Leadership Principles & the bar-raiser model — a public, explicit competency rubric",
         "STAR method (Situation, Task, Action, Result) — structured behavioral interviewing",
@@ -4505,6 +4518,7 @@ export const technicalInterviews = {
       "id": "u12",
       "title": "Negotiation as a Game",
       "summary": "Compensation negotiation via decision and game theory: BATNA/ZOPA, the positive expected value of negotiating, exploding offers as commitment devices, and modeling total comp with vesting and risk.",
+      "intro": "An offer converts the pipeline's uncertainty into a negotiation, and this unit conducts it with decision theory rather than nerve. BATNA and ZOPA define your actual leverage; the expected-value calculation shows that negotiating is almost always positive-EV, because the downside candidates fear is largely mythical when the ask is professional. Competing offers are leverage to be sequenced deliberately; exploding deadlines are commitment devices with known counters. The final lesson models the offer itself: base, bonus, and equity with vesting schedules, strike prices, and risk discounts — because naively comparing a big-tech RSU package against a startup option grant is how five-figure mistakes happen. The gate makes you model and negotiate realistic offers, numbers first.",
       "references": [
         "Fisher, Ury & Patton — Getting to Yes: BATNA, interests vs positions, objective criteria",
         "Chris Voss — Never Split the Difference: anchoring, calibrated questions",
@@ -4854,6 +4868,7 @@ export const technicalInterviews = {
       "id": "u13",
       "title": "Prep as Optimization & Interview-Day Execution",
       "summary": "Treating preparation as an eval-driven loop, executing on the day under the arousal–performance curve, and making the final offer decision — the course's synthesis.",
+      "intro": "The closing unit is the course's synthesis, applied to the two moments that remain: preparation and the day itself. Preparation becomes an eval-driven loop — timed mock interviews as the eval set, error analysis over your failures, targeted drilling on the weakest competency, repeat — the same measurement discipline the course opened with, now pointed at yourself. Interview-day execution works the arousal–performance curve: why moderate activation helps and panic destroys, and the protocols — routines, reframing, recovering from a bad round — that keep you on the productive side of it. The offer decision closes the course: choosing with Unit 12's model plus the factors the model cannot price. The gate is cumulative by design; every spine of the course appears in it.",
       "references": [
         "Eval-driven development — build a failing-case set, fix, re-run, no regressions (cross-links the `ai-implementation` course, m3l4; and this app's own spaced-repetition engine)",
         "Yerkes & Dodson (1908) — the arousal/performance inverted-U; Ericsson — deliberate practice",

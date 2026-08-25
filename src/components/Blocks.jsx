@@ -1,7 +1,7 @@
 import { theme } from "../theme.js";
 import { Diagram } from "./Diagram.jsx";
 
-function rich(body) {
+export function rich(body) {
   return String(body)
     .split(/(\*\*.*?\*\*|\*[^*]+\*)/g)
     .map((part, j) => {

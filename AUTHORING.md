@@ -18,12 +18,14 @@ export const <id> = {
   subject: "Mathematics",          // for grouping/filtering
   difficulty: "Lower-undergraduate",
   description: "One or two sentences. What it covers and how hard the gates are.",
+  overview: "Multi-paragraph learner-facing orientation, >= 250 words — see 'The overview' below.",
   sources: ["Stewart, Calculus 8e, ch.2", "MIT 18.01 OCW"],  // provenance — see below
   units: [
     {
       id: "u1",
       title: "Unit title",
       summary: "One line shown on the course map.",
+      intro: "Chapter opener, >= 100 words — see 'Cohesion rules' below.",
       prerequisites: ["u0"],       // optional; defaults to the previous unit
       masteryThreshold: 0.85,      // optional; defaults to 0.85
       lessons: [
@@ -31,6 +33,7 @@ export const <id> = {
           id: "u1l1",
           title: "Lesson title",
           estMinutes: 12,
+          builds_on: ["u0l2"],     // optional: earlier lessons this one extends (validated ids)
           content: [ /* blocks, see below */ ],
           reviewItems: [           // REQUIRED for anything you want to retain
             { id: "u1l1-i1", front: "Question/cue", back: "Answer" },
@@ -45,6 +48,32 @@ export const <id> = {
   ],
 };
 ```
+
+### The overview (course orientation — REQUIRED)
+
+`overview` is the course's **lecture 0**: the university-style orientation that
+the lesson depth floors deliberately exclude (a survey chapter has no theorems
+or problem sets, so it cannot be a lesson — and must not be forced into one).
+It renders on the course landing page above the unit map, and it is enforced:
+`npm run validate` fails a course whose overview is missing or under 250 words
+(`DEPTH.MIN_OVERVIEW_WORDS`).
+
+Address the learner directly, and answer, in order:
+
+1. **What is this field?** The problem it exists to solve, in plain terms —
+   before any of the course's own framing or jargon.
+2. **Why does it matter?** What goes wrong without it; what mastery buys you.
+3. **What are the pillars?** The course's organizing idea and the 2–4
+   load-bearing concepts everything else hangs on.
+4. **How do the units build?** The arc in phases — not a unit-by-unit listing.
+5. **What will you be able to do at the end**, and how the gates test it.
+
+Plain prose: `**bold**`/`*italic*` and blank-line paragraphs (rendered like a
+block `body`). Target 250–450 words. The `description` stays at one or two
+sentences — the overview is where the framing lives, so the description no
+longer has to compress the whole thesis into a subtitle. Do not spend the
+overview on meta-commentary about rigor policy or generation process; it is
+addressed to the learner, not the maintainer.
 
 ### Content blocks
 
@@ -205,6 +234,14 @@ And every **unit's mastery check**: ≥ 4 questions, ≤ half `mcq`, an
 `explanation` on every question, `proof`/`open` rubrics with ≥ 3 criteria,
 `masteryThreshold` ≥ 0.8.
 
+And every **course**: an `overview` of ≥ 250 words (the orientation — see
+"The overview" above). And every **unit**: an `intro` of ≥ 100 words (the
+chapter opener — see "Cohesion rules" below).
+
+The floor has a ceiling: a lesson over 3,000 words draws a **warning**
+(chapter-scale — split it or tighten it). The target band is 1,600–2,600
+words, sized by the lesson's role, not by a template.
+
 The study-words rule cuts both ways: state an honest `estMinutes`. Deepen the
 lesson or lower the claim — the validator accepts either, and also warns when
 the claim *undersells* long content (> 300 implied wpm).
@@ -225,6 +262,39 @@ These are non-negotiable if "mastery" is to mean anything:
    misconception, with the fix in the `explanation` (explanations are enforced).
 6. **Threshold ≥ 0.8.** Lower than that isn't a gate (enforced).
 
+## Cohesion rules (what makes a course a book, not a binder)
+
+The depth floors make each lesson a real section; these rules make the
+sections a *book*. Real textbooks achieve flow with a small set of named,
+mechanical devices — cheap words in exactly the right places:
+
+1. **Course `overview`** (enforced, ≥ 250 words) — the lecture-0 orientation.
+   See "The overview" above.
+2. **Unit `intro`** (enforced, ≥ 100 words) — the chapter opener: where the
+   course now stands (what the previous unit established), the problem this
+   unit takes up, and what its lessons build toward. 100–250 words, written
+   when the unit is generated. Rendered on the course map above the unit's
+   lesson list once the unit unlocks.
+3. **Bridge in / bridge out** — after the first lesson of a unit, the opening
+   `text` block names what earlier material the lesson builds on and the
+   problem it left open ("In *Names Are Bindings* we established X; that
+   leaves Y open"); the final block before the exercises states in 2–3
+   sentences what is now established and where it leads. Checked by
+   `npm run review` (the BRIDGED criterion), not by the validator.
+4. **A running example** — declared in Pass 0: one concrete system or
+   scenario the course returns to at increasing depth across units. The
+   strongest cohesion device a textbook has; `npm run review` looks for it
+   where relevant.
+5. **Backward references by name** — refer to earlier lessons and results by
+   their actual titles or theorem names so the reader can navigate. Where the
+   dependency is load-bearing, record it in `builds_on` — it renders as a
+   clickable breadcrumb on the lesson and is validated against real ids.
+6. **Sized by role, not by template** — lessons within a unit SHOULD vary in
+   length: conceptual openers near the floor, technique-heavy cores near the
+   ceiling. Uniform lesson length across a unit is a defect signature
+   (budget-driven writing), not rigor. Depth is reaching transfer in the
+   fewest words that get there; a lesson that can be shorter must be.
+
 ## Source-grounding
 
 `sources[]` is the provenance trail. When generating from real material:
@@ -243,11 +313,18 @@ one-shot courses at ~760 median words/lesson vs ~1,850 for unit-by-unit ones.
 
 So: **never generate more than one unit per pass.**
 
-1. Pass 0 — outline only: course object with `id`/`title`/`sources`, unit list
-   with titles + summaries, no lessons.
-2. Pass N — write ONE unit completely to the depth floors above. Budget
-   ~1,600–2,500 words per lesson. If a lesson can't reach 1,200 words without
-   padding, its topic is too small — merge it; if it sprawls, split it.
+1. Pass 0 — outline + orientation: course object with `id`/`title`/`sources`,
+   unit list with titles + summaries, no lessons — plus the learner-facing
+   `overview` (write it after the unit list is settled, since it must describe
+   the arc honestly) and the course's **running example** (cohesion rule 4).
+2. Pass N — write ONE unit completely to the depth floors above: its `intro`
+   (chapter opener) first, then the lessons with their bridge-in/bridge-out
+   beats, threading the running example where the material touches it. Budget
+   1,600–2,600 words per lesson, **sized by role — not every lesson the same
+   length**. If a lesson can't reach 1,200 words without padding, its topic is
+   too small — merge it; if it passes ~3,000, split it or tighten it. Never
+   close a word-count gap with prose; close it with an example, a proof step,
+   or an exercise.
 3. Run `npm run validate -- <course-id>` after every pass. Fix errors before
    generating the next unit. Never lower `estMinutes` merely to pass — first ask
    whether the content is actually complete.
@@ -260,13 +337,22 @@ So: **never generate more than one unit per pass.**
 > written so far: <PASTE>.
 >
 > Write **unit <K> only**, exactly matching `crucible/AUTHORING.md`. Follow every
-> rigor rule and every depth floor (they are machine-enforced). Specifically:
+> rigor rule, every depth floor, and every cohesion rule (the floors are
+> machine-enforced). Specifically:
+> - A unit `intro` of 100–250 words: the chapter opener — what the previous
+>   units established, the problem this unit takes up, where its lessons go.
 > - 3–5 lessons, each a **full textbook section**, not a summary: 8–14 content
->   blocks and ≥ 1,200 words (target 1,600–2,500) — motivation, formal
+>   blocks and ≥ 1,200 words (target 1,600–2,600, warning above 3,000; size
+>   each lesson by its role, not to a uniform length) — motivation, formal
 >   `definition`s, the key results as `theorem` blocks *with inline proofs*, 2+
 >   worked `example`s, and a closing `exercises` set (3–6 problems with worked
 >   solutions). Plus 3–6 atomic review cards. An honest `estMinutes` backed by
 >   the content (≥ 90 study-wpm).
+> - Bridges: every lesson after the unit's first opens by naming what it
+>   builds on (by title) and the problem that left open, and closes by stating
+>   what is now established and where it leads; record load-bearing
+>   dependencies in `builds_on`. Thread the course's running example
+>   (**<EXAMPLE>**) wherever the material touches it.
 > - A mastery check of 4–6 questions that test *application*, at least half
 >   non-`mcq`, threshold 0.85, every question with an `explanation`,
 >   `proof`/`open` rubrics with 3+ independently checkable criteria.
