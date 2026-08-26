@@ -12,8 +12,9 @@ import { technicalInterviews } from "./courses/technical-interviews.js";
 import { react } from "./courses/react.js";
 import { aiEvals } from "./courses/ai-evals.js";
 import { python } from "./courses/python.js";
+import { systemDesign } from "./courses/system-design.js";
 
-export const COURSES = [algorithms, entrepreneurship, cloud, langgraph, aiImplementation, aiEvals, technicalInterviews, react, python, probability];
+export const COURSES = [algorithms, entrepreneurship, cloud, langgraph, aiImplementation, aiEvals, technicalInterviews, react, python, probability, systemDesign];
 
 export function getCourse(id) {
   return COURSES.find((c) => c.id === id) || null;
